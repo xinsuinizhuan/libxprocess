@@ -1,6 +1,3 @@
-#include <string>
-#include <vector>
-
 #include "crossprocess.h"
 
 #ifdef _WIN32
