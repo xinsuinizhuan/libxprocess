@@ -12,13 +12,14 @@
 #define ARG_PROCID           double
 #define RET_CONST_CHAR_PTR   void *
 #define ARG_CONST_CHAR_PTR   void *
+#define ARG_INT_OUT          void *
 #define ARG_PROCID_OUT       void *
 #define ARG_PROCID_OUT_VEC   void *
 #define ARG_CHAR_PTR_VEC     void *
 #define ARG_CHAR_OUT_PTR     void *
 #define ARG_CHAR_OUT_PTR_VEC void *
 
-EXPORTED_FUNCTION RET_VOID ProcIdEnumerate(ARG_PROCID_OUT_VEC procId, ARG_INT_OUT size);
+EXPORTED_FUNCTION RET_VOID ProcIdEnumerate(ARG_PROCID_OUT_VEC procId, ARG_INT_OUT size) {
   CrossProcess::ProcIdEnumerate((PROCID **)&procId, (int *)&size); return 0;
 }
 
@@ -46,20 +47,20 @@ EXPORTED_FUNCTION RET_VOID ProcIdFromParentProcId(ARG_PROCID parentProcId, ARG_P
   CrossProcess::ProcIdFromParentProcId((PROCID)parentProcId, (PROCID **)&procId, (int *)&size); return 0;
 }
 
-EXPORTED_FUNCTION RET_VOID *ExeFromProcId(ARG_PROCID procId, ARG_CHAR_OUT_PTR buffer) {
+EXPORTED_FUNCTION RET_VOID ExeFromProcId(ARG_PROCID procId, ARG_CHAR_OUT_PTR buffer) {
   CrossProcess::ExeFromProcId((PROCID)procId, (char **)&buffer); return 0;
 }
 
-EXPORTED_FUNCTION RET_CONST_ARG_CHAR *DirectoryGetCurrentWorking() {
-  return CrossProcess::DirectoryGetCurrentWorking();
+EXPORTED_FUNCTION RET_CONST_CHAR_PTR DirectoryGetCurrentWorking() {
+  return (char *)CrossProcess::DirectoryGetCurrentWorking();
 }
 
 EXPORTED_FUNCTION RET_BOOL DirectorySetCurrentWorking(ARG_CONST_CHAR_PTR dname) {
-  return CrossProcess::DirectorySetCurrentWorking((char *)dname);
+  CrossProcess::DirectorySetCurrentWorking((char *)dname); return 0;
 }
 
 EXPORTED_FUNCTION RET_VOID CwdFromProcId(ARG_PROCID procId, ARG_CHAR_OUT_PTR buffer) {
-  CrossProcess::CwdFromProcId((PROCID)procId, (PROCID *)&buffer); return 0;
+  CrossProcess::CwdFromProcId((PROCID)procId, (char **)&buffer); return 0;
 }
 
 EXPORTED_FUNCTION RET_VOID FreeCmdline(ARG_CHAR_PTR_VEC buffer) {
@@ -78,12 +79,12 @@ EXPORTED_FUNCTION RET_VOID ProcIdFromParentProcIdSkipSh(ARG_PROCID parentProcId,
   CrossProcess::ProcIdFromParentProcIdSkipSh((PROCID)parentProcId, (PROCID **)&procId, (int *)&size); return 0;
 }
 
-EXPORTED_FUNCTION RET_CONST_ARG_CHAR *EnvironmentGetVariable(ARG_CONST_CHAR_PTR name) {
-  return CrossProcess::EnvironmentGetVariable((char *)name);
+EXPORTED_FUNCTION RET_CONST_CHAR_PTR EnvironmentGetVariable(ARG_CONST_CHAR_PTR name) {
+  return (char *)CrossProcess::EnvironmentGetVariable((char *)name);
 }
 
 EXPORTED_FUNCTION RET_BOOL EnvironmentSetVariable(ARG_CONST_CHAR_PTR name, ARG_CONST_CHAR_PTR value) {
-  return CrossProcess::EnvironmentSetVariable((char *)name, (char *)value);
+  CrossProcess::EnvironmentSetVariable((char *)name, (char *)value); return 0;
 }
 
 EXPORTED_FUNCTION RET_VOID FreeEnviron(ARG_CHAR_OUT_PTR buffer) {
