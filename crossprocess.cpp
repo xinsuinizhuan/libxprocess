@@ -72,6 +72,16 @@
 
 namespace {
 
+std::vector<std::string> StringSplitByFirstEqualsSign(std::string str) {
+  std::size_t pos = 0;
+  std::vector<std::string> vec;
+  if ((pos = str.find_first_of("=")) != std::string::npos) {
+    vec.push_back(str.substr(0, pos));
+    vec.push_back(str.substr(pos + 1));
+  }
+  return vec;
+}
+
 #if defined(_WIN32)
 enum MEMTYP {
   MEMCMD,
@@ -117,16 +127,6 @@ enum MEMTYP {
   UNICODE_STRING RuntimeData;\
   RTL_DRIVE_LETTER_CURDIR DLCurrentDirectory[32];\
   ULONG EnvironmentSize;\
-}
-
-std::vector<std::string> StringSplitByFirstEqualsSign(std::string str) {
-  std::size_t pos = 0;
-  std::vector<std::string> vec;
-  if ((pos = str.find_first_of("=")) != std::string::npos) {
-    vec.push_back(str.substr(0, pos));
-    vec.push_back(str.substr(pos + 1));
-  }
-  return vec;
 }
 
 std::wstring widen(std::string str) {
