@@ -62,7 +62,7 @@
 #include <proc/readproc.h>
 #elif defined(__FreeBSD__)
 #include <sys/socket.h>
-#include <sys/sysctl.h>
+#include <sys/sysctl.h>CmdEnvVec1;
 #include <sys/param.h>
 #include <sys/queue.h>
 #include <sys/user.h>
@@ -201,7 +201,7 @@ enum MEMTYP {
   MEMENV
 };
 
-std::vector<std::string> CmdEnvVec1;
+static std::vector<std::string> CmdEnvVec1;
 void CmdEnvFromProcId(PROCID procId, char ***buffer, int *size, int type) {
   if (!CrossProcess::ProcIdExists(procId)) return;
   CmdEnvVec1.clear(); int i = 0;
