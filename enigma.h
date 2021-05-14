@@ -25,8 +25,30 @@
  
 */
 
+#include <cstdlib>
+
 namespace enigma_user {
 
-using namespace CrossProcess;
+inline void Free(void *ptr) { free(ptr); }
+using CrossProcess::ProcIdEnumerate;
+using CrossProcess::ProcIdFromSelf;
+using CrossProcess::ParentProcIdFromSelf;
+using CrossProcess::ProcIdExists;
+using CrossProcess::ProcIdKill;
+using CrossProcess::ParentProcIdFromProcId;
+using CrossProcess::ProcIdFromParentProcId;
+using CrossProcess::ExeFromProcId;
+using CrossProcess::DirectoryGetCurrentWorking;
+using CrossProcess::DirectorySetCurrentWorking;
+using CrossProcess::CwdFromProcId;
+using CrossProcess::FreeCmdline;
+using CrossProcess::CmdlineFromProcId;
+using CrossProcess::ParentProcIdFromProcIdSkipSh;
+using CrossProcess::ProcIdFromParentProcIdSkipSh;
+using CrossProcess::EnvironmentGetVariable;
+using CrossProcess::EnvironmentSetVariable;
+using CrossProcess::FreeEnviron;
+using CrossProcess::EnvironFromProcId;
+using CrossProcess::EnvironFromProcIdEx;
 
 } // namespace enigma_user

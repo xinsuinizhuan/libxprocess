@@ -5,7 +5,7 @@ Name: Cross Process
 Identifier: CrossProcess
 Author: Samuel Venable
 Description: Cross-platform function library for reading process information. Requires libprocps-dev package on Ubuntu and Debian.
-Default: false
+Default: true
 Icon: crossprocess.png
 
 Depends: None
