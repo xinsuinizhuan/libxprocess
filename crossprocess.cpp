@@ -628,7 +628,7 @@ void ProcIdFromParentProcIdSkipSh(PROCID parentProcId, PROCID **procId, int *siz
   #if !defined(_WIN32)
   if (procId) {
     for (int i = 0; i < *size; i++) {
-      char **cmdline; int cmdsize;
+      char **cmdline = nullptr; int cmdsize;
       CmdlineFromProcId(*procId[i], &cmdline, &cmdsize);
       if (cmdline) {
         if (strcmp(cmdline[0], "/bin/sh") == 0) {
@@ -727,7 +727,7 @@ void EnvironFromProcId(PROCID procId, char ***buffer, int *size) {
 }
 
 void EnvironFromProcIdEx(PROCID procId, const char *name, char **value) {
-  char **buffer; int size; *value = (char *)"\0";
+  char **buffer = nullptr; int size; *value = (char *)"\0";
   EnvironFromProcId(procId, &buffer, &size);
   if (buffer) {
     for (int i = 0; i < size; i++) {
