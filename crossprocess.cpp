@@ -533,19 +533,25 @@ void CwdFromProcId(PROCID procId, char **buffer) {
   #elif defined(__FreeBSD__)
   char cwd[PATH_MAX]; unsigned cntp;
   procstat *proc_stat = procstat_open_sysctl();
-  kinfo_proc *proc_info = procstat_getprocs(proc_stat, KERN_PROC_PID, procId, &cntp);
-  filestat_list *head = procstat_getfiles(proc_stat, proc_info, 0);
-  filestat *fst;
-  STAILQ_FOREACH(fst, head, next) {
-    if (fst->fs_uflags & PS_FST_UFLAG_CDIR) {
-      strcpy(cwd, fst->fs_path);
-      static std::string str; str = cwd;
-      *buffer = (char *)str.c_str();
+  if (proc_stat) {
+    kinfo_proc *proc_info = procstat_getprocs(proc_stat, KERN_PROC_PID, procId, &cntp);
+    if (proc_info) {
+      filestat_list *head = procstat_getfiles(proc_stat, proc_info, 0);
+      if (head) {
+        filestat *fst;
+        STAILQ_FOREACH(fst, head, next) {
+          if (fst->fs_uflags & PS_FST_UFLAG_CDIR) {
+            strcpy(cwd, fst->fs_path);
+            static std::string str; str = cwd;
+            *buffer = (char *)str.c_str();
+          }
+        }
+        procstat_freefiles(proc_stat, head);
+      }
+      procstat_freeprocs(proc_stat, proc_info);
     }
+    procstat_close(proc_stat);
   }
-  procstat_freefiles(proc_stat, head);
-  procstat_freeprocs(proc_stat, proc_info);
-  procstat_close(proc_stat);
   #endif
 }
 
@@ -590,16 +596,20 @@ void CmdlineFromProcId(PROCID procId, char ***buffer, int *size) {
   closeproc(proc);
   #elif defined(__FreeBSD__)
   procstat *proc_stat = procstat_open_sysctl(); unsigned cntp;
-  kinfo_proc *proc_info = procstat_getprocs(proc_stat, KERN_PROC_PID, procId, &cntp);
-  char **cmdline = procstat_getargv(proc_stat, proc_info, 0);
-  if (cmdline) {
-    for (int j = 0; cmdline[j]; j++) {
-      CmdlineVec1.push_back(cmdline[j]); i++;
+  if (proc_stat) {
+    kinfo_proc *proc_info = procstat_getprocs(proc_stat, KERN_PROC_PID, procId, &cntp);
+    if (proc_info) {
+      char **cmdline = procstat_getargv(proc_stat, proc_info, 0);
+      if (cmdline) {
+        for (int j = 0; cmdline[j]; j++) {
+          CmdlineVec1.push_back(cmdline[j]); i++;
+        }
+        procstat_freeargv(proc_stat);
+      }
+      procstat_freeprocs(proc_stat, proc_info);
     }
+    procstat_close(proc_stat);
   }
-  procstat_freeargv(proc_stat);
-  procstat_freeprocs(proc_stat, proc_info);
-  procstat_close(proc_stat);
   #endif
   std::vector<char *> CmdlineVec2;
   for (int i = 0; i < CmdlineVec1.size(); i++)
@@ -707,16 +717,20 @@ void EnvironFromProcId(PROCID procId, char ***buffer, int *size) {
   closeproc(proc);
   #elif defined(__FreeBSD__)
   procstat *proc_stat = procstat_open_sysctl(); unsigned cntp;
-  kinfo_proc *proc_info = procstat_getprocs(proc_stat, KERN_PROC_PID, procId, &cntp);
-  char **environ = procstat_getenvv(proc_stat, proc_info, 0);
-  if (environ) {
-    for (int j = 0; environ[j]; j++) {
-      EnvironVec1.push_back(environ[j]); i++;
+  if (proc_stat) {
+    kinfo_proc *proc_info = procstat_getprocs(proc_stat, KERN_PROC_PID, procId, &cntp);
+    if (proc_info) {
+      char **environ = procstat_getenvv(proc_stat, proc_info, 0);
+      if (environ) {
+        for (int j = 0; environ[j]; j++) {
+          EnvironVec1.push_back(environ[j]); i++;
+        }
+        procstat_freeenvv(proc_stat);
+      }
+      procstat_freeprocs(proc_stat, proc_info);
     }
+    procstat_close(proc_stat);
   }
-  procstat_freeenvv(proc_stat);
-  procstat_freeprocs(proc_stat, proc_info);
-  procstat_close(proc_stat);
   #endif
   std::vector<char *> EnvironVec2;
   for (int i = 0; i < EnvironVec1.size(); i++)
