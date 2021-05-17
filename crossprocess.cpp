@@ -171,10 +171,6 @@ bool IsX86Process(HANDLE proc) {
   return isWow;
 }
 
-bool IsMatchingArch(HANDLE proc) { 
-  return (IsX86Process(GetCurrentProcess()) == IsX86Process(proc));
-}
-
 #if defined(EXE_INCLUDES)
 void ReadProcessOuputThread(HANDLE handle, std::string *output) {
   std::string result;
@@ -229,22 +225,18 @@ std::string ExecuteProcessAndReadOutput(std::string command) {
 }
 #endif
 
-void CwdCmdEnvFromProcId(PROCID procId, wchar_t **buffer, int type) {
-  HANDLE proc = OpenProcessWithDebugPrivilege(procId);
+void CwdCmdEnvFromProc(HANDLE proc, wchar_t **buffer, int type) {
   if (proc == nullptr) return;
-  if (!IsMatchingArch(proc))
-  { CloseHandle(proc); return; } 
-  PEB peb; SIZE_T nRead; ULONG len = 0;
-  PROCESS_BASIC_INFORMATION pbi;
-  RTL_USER_PROCESS_PARAMETERS upp;
+  if (IsX86Process(GetCurrentProcess()) != IsX86Process(proc)) return; 
+  PEB peb; SIZE_T nRead; ULONG len = 0; PROCESS_BASIC_INFORMATION pbi; RTL_USER_PROCESS_PARAMETERS upp;
   typedef NTSTATUS (__stdcall *NTQIP)(HANDLE, PROCESSINFOCLASS, PVOID, ULONG, PULONG);
   NTQIP NtQueryInformationProcess = NTQIP(GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "NtQueryInformationProcess"));
   NTSTATUS status = NtQueryInformationProcess(proc, ProcessBasicInformation, &pbi, sizeof(pbi), &len);
-  if (status) { CloseHandle(proc); return; }
+  if (status) return;
   ReadProcessMemory(proc, pbi.PebBaseAddress, &peb, sizeof(peb), &nRead);
-  if (!nRead) { CloseHandle(proc); return; }
+  if (!nRead) return;
   ReadProcessMemory(proc, peb.ProcessParameters, &upp, sizeof(upp), &nRead);
-  if (!nRead) { CloseHandle(proc); return; }
+  if (!nRead) return;
   PVOID buf = nullptr; len = 0;
   if (type == MEMCWD) {
     buf = upp.CurrentDirectoryPath.Buffer;
@@ -258,8 +250,7 @@ void CwdCmdEnvFromProcId(PROCID procId, wchar_t **buffer, int type) {
   }
   wchar_t *res = new wchar_t[len / 2 + 1];
   ReadProcessMemory(proc, buf, res, len, &nRead);
-  if (!nRead) { CloseHandle(proc); return; }
-  res[len / 2] = L'\0'; *buffer = res;
+  if (!nRead) return; res[len / 2] = L'\0'; *buffer = res;
 }
 #endif
 
@@ -576,10 +567,10 @@ bool DirectorySetCurrentWorking(const char *dname) {
 void CwdFromProcId(PROCID procId, char **buffer) {
   if (!ProcIdExists(procId)) return;
   #if defined(_WIN32)
-  #if defined(EXE_INCLUDES)
   HANDLE proc = OpenProcessWithDebugPrivilege(procId);
   if (proc == nullptr) return;
-  if (!IsMatchingArch(proc)) {
+  #if defined(EXE_INCLUDES)
+  if (IsX86Process(GetCurrentProcess()) != IsX86Process(proc)) {
     static std::string str;
     std::string exe; std::string tmp = EnvironmentGetVariable("TMP");
     if (IsX86Process(proc)) { exe = tmp + "\\crossprocess32.exe"; } 
@@ -603,7 +594,7 @@ void CwdFromProcId(PROCID procId, char **buffer) {
   } else {
   #endif
     wchar_t *cwdbuf = nullptr;
-    CwdCmdEnvFromProcId(procId, &cwdbuf, MEMCWD);
+    CwdCmdEnvFromProc(proc, &cwdbuf, MEMCWD);
     if (cwdbuf) {
       static std::string str; str = narrow(cwdbuf);
       *buffer = (char *)str.c_str();
@@ -611,8 +602,8 @@ void CwdFromProcId(PROCID procId, char **buffer) {
     }
   #if defined(EXE_INCLUDES)
   }
-  CloseHandle(proc);
   #endif
+  CloseHandle(proc);
   #elif (defined(__APPLE__) && defined(__MACH__))
   proc_vnodepathinfo vpi;
   char cwd[PROC_PIDPATHINFO_MAXSIZE];
@@ -662,10 +653,10 @@ void CmdlineFromProcId(PROCID procId, char ***buffer, int *size) {
   if (!ProcIdExists(procId)) return;
   CmdlineVec1.clear(); int i = 0;
   #if defined(_WIN32)
-  #if defined(EXE_INCLUDES)
   HANDLE proc = OpenProcessWithDebugPrivilege(procId);
   if (proc == nullptr) return;
-  if (!IsMatchingArch(proc)) {
+  #if defined(EXE_INCLUDES)
+  if (IsX86Process(GetCurrentProcess()) != IsX86Process(proc)) {
     std::string exe; std::string tmp = EnvironmentGetVariable("TMP");
     if (IsX86Process(proc)) { exe = tmp + "\\crossprocess32.exe"; } 
     else { exe = tmp + "\\crossprocess64.exe"; }
@@ -697,7 +688,7 @@ void CmdlineFromProcId(PROCID procId, char ***buffer, int *size) {
   } else {
   #endif
     wchar_t *cmdbuf = nullptr; int cmdsize;
-    CwdCmdEnvFromProcId(procId, &cmdbuf, MEMCMD);
+    CwdCmdEnvFromProc(proc, &cmdbuf, MEMCMD);
     if (cmdbuf) {
       wchar_t **cmdline = CommandLineToArgvW(cmdbuf, &cmdsize);
       if (cmdline) {
@@ -710,8 +701,8 @@ void CmdlineFromProcId(PROCID procId, char ***buffer, int *size) {
     }
   #if defined(EXE_INCLUDES)
   }
-  CloseHandle(proc);
   #endif
+  CloseHandle(proc);
   #elif (defined(__APPLE__) && defined(__MACH__))
   char **cmdline = nullptr; int cmdsiz;
   CmdEnvFromProcId(procId, &cmdline, &cmdsiz, MEMCMD);
@@ -720,7 +711,7 @@ void CmdlineFromProcId(PROCID procId, char ***buffer, int *size) {
       CmdlineVec1.push_back(cmdline[i]); i++;
     }
     delete[] cmdline;
-  } else return;
+  }
   #elif (defined(__linux__) && !defined(__ANDROID__))
   PROCTAB *proc = openproc(PROC_FILLCOM | PROC_PID, &procId);
   if (proc_t *proc_info = readproc(proc, nullptr)) {
@@ -823,10 +814,10 @@ void EnvironFromProcId(PROCID procId, char ***buffer, int *size) {
   if (!ProcIdExists(procId)) return;
   EnvironVec1.clear(); int i = 0;
   #if defined(_WIN32)
-  #if defined(EXE_INCLUDES)
   HANDLE proc = OpenProcessWithDebugPrivilege(procId);
   if (proc == nullptr) return;
-  if (!IsMatchingArch(proc)) {
+  #if defined(EXE_INCLUDES)
+  if (IsX86Process(GetCurrentProcess()) != IsX86Process(proc)) {
     std::string exe; std::string tmp = EnvironmentGetVariable("TMP");
     if (IsX86Process(proc)) { exe = tmp + "\\crossprocess32.exe"; } 
     else { exe = tmp + "\\crossprocess64.exe"; }
@@ -850,22 +841,22 @@ void EnvironFromProcId(PROCID procId, char ***buffer, int *size) {
         EnvironVec1.push_back(&str[j]); i++;
         j += str.length() + j + 1;
       }
-    } else return;
+    }
   } else {
   #endif
     wchar_t *wenviron = nullptr;
-    CwdCmdEnvFromProcId(procId, &wenviron, MEMENV);
+    CwdCmdEnvFromProc(proc, &wenviron, MEMENV);
     int j = 0; if (wenviron) {
       while (wenviron[j] != L'\0') {
         EnvironVec1.push_back(narrow(&wenviron[j])); i++;
         j += wcslen(wenviron + j) + 1;
       }
       delete[] wenviron;
-    } else return;
+    }
   #if defined(EXE_INCLUDES)
   }
-  CloseHandle(proc);
   #endif
+  CloseHandle(proc);
   #elif (defined(__APPLE__) && defined(__MACH__))
   char **environ = nullptr; int envsiz;
   CmdEnvFromProcId(procId, &environ, &envsiz, MEMENV);
@@ -874,7 +865,7 @@ void EnvironFromProcId(PROCID procId, char ***buffer, int *size) {
       EnvironVec1.push_back(environ[i]); i++;
     }
     delete[] environ;
-  } else return;
+  }
   #elif (defined(__linux__) && !defined(__ANDROID__))
   PROCTAB *proc = openproc(PROC_FILLENV | PROC_PID, &procId);
   if (proc_t *proc_info = readproc(proc, nullptr)) {
