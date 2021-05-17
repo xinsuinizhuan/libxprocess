@@ -835,10 +835,11 @@ void EnvironFromProcId(PROCID procId, char ***buffer, int *size) {
       }
     }
     std::string str = ExecuteProcessAndReadOutput("\"" + exe + "\" --env-from-pid " + std::to_string(procId));
+	char *envv = str.data();
     int j = 0; if (!str.empty()) {
-      while (str[j] != L'\0') {
-        EnvironVec1.push_back(&str[j]); i++;
-        j += str.length() + j + 1;
+      while (envv[j] != '\0') {
+        EnvironVec1.push_back(&envv[j]); i++;
+        j += strlen(envv + j) + 1;
       }
     }
   } else {
@@ -955,11 +956,10 @@ int main(int argc, char **argv) {
       char **buffer = nullptr; int size;
       CrossProcess::EnvironFromProcId(strtoul(argv[2], nullptr, 10), &buffer, &size);
       if (buffer) {
-        std::string result;
+        using namespace std::string_literals;
         for (int i = 0; i < size; i++)
-          result += std::string(buffer[i]) + "\0";
-        result += "\0";
-        printf("%s\n", result.c_str());
+          std::cout << buffer[i] << "\0"s;
+        std::cout << "\0"s;
         CrossProcess::FreeEnviron(buffer);
       }
     }
