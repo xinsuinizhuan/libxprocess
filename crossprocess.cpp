@@ -674,14 +674,11 @@ void CmdlineFromProcId(PROCID procId, char ***buffer, int *size) {
       }
     }
     std::string str = ExecuteProcessAndReadOutput("\"" + exe + "\" --cmd-from-pid " + std::to_string(procId));
-    if (!str.empty()) {
-      std::wstring wstr = widen(str); int cmdsize;
-      wchar_t **cmdline = CommandLineToArgvW(wstr.c_str(), &cmdsize);
-      if (cmdline) {
-        while (i < cmdsize) {
-          CmdlineVec1.push_back(narrow(cmdline[i])); i++;
-        }
-        LocalFree(cmdline);
+    char *cmd = str.data();
+    int j = 0; if (!str.empty()) {
+      while (cmd[j] != '\0') {
+        CmdlineVec1.push_back(&cmd[j]); i++;
+        j += strlen(cmd + j) + 1;
       }
     }
   } else {
@@ -835,11 +832,11 @@ void EnvironFromProcId(PROCID procId, char ***buffer, int *size) {
       }
     }
     std::string str = ExecuteProcessAndReadOutput("\"" + exe + "\" --env-from-pid " + std::to_string(procId));
-    char *envv = str.data();
+    char *env = str.data();
     int j = 0; if (!str.empty()) {
-      while (envv[j] != '\0') {
-        EnvironVec1.push_back(&envv[j]); i++;
-        j += strlen(envv + j) + 1;
+      while (env[j] != '\0') {
+        EnvironVec1.push_back(&env[j]); i++;
+        j += strlen(env + j) + 1;
       }
     }
   } else {
@@ -935,28 +932,26 @@ static std::string StringReplaceAll(std::string str, std::string substr, std::st
 
 int main(int argc, char **argv) {
   if (argc >= 3) {
+    using namespace std::string_literals;
     if (strcmp(argv[1], "--cwd-from-pid") == 0) {
       char *buffer = nullptr;
       CrossProcess::CwdFromProcId(strtoul(argv[2], nullptr, 10), &buffer);
       if (buffer) {
-        printf("%s\n", buffer);
+        printf("%s", buffer);
       }
     } else if (strcmp(argv[1], "--cmd-from-pid") == 0) {
       char **buffer = nullptr; int size;
       CrossProcess::CmdlineFromProcId(strtoul(argv[2], nullptr, 10), &buffer, &size);
       if (buffer) {
-        std::string result;
         for (int i = 0; i < size; i++)
-          result += "\"" + StringReplaceAll(buffer[i], "\"", "\\\"") + "\" ";
-        if (!result.empty()) result.pop_back();
-        printf("%s\n", result.c_str());
+          std::cout << buffer[i] << "\0"s;
+        std::cout << "\0"s;
         CrossProcess::FreeCmdline(buffer);
       }
     } else if (strcmp(argv[1], "--env-from-pid") == 0) {
       char **buffer = nullptr; int size;
       CrossProcess::EnvironFromProcId(strtoul(argv[2], nullptr, 10), &buffer, &size);
       if (buffer) {
-        using namespace std::string_literals;
         for (int i = 0; i < size; i++)
           std::cout << buffer[i] << "\0"s;
         std::cout << "\0"s;
