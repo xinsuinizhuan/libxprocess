@@ -147,22 +147,27 @@ std::string narrow(std::wstring wstr) {
 }
 
 HANDLE OpenProcessWithDebugPrivilege(PROCID procId) {
-  HANDLE hToken; LUID luid; TOKEN_PRIVILEGES tkp;
-  OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken);
-  LookupPrivilegeValue(nullptr, SE_DEBUG_NAME, &luid);
-  tkp.PrivilegeCount = 1; tkp.Privileges[0].Luid = luid;
-  tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
-  AdjustTokenPrivileges(hToken, false, &tkp, sizeof(tkp), nullptr, nullptr);
-  CloseHandle(hToken); return OpenProcess(PROCESS_ALL_ACCESS, false, procId);
+  HANDLE proc = nullptr; HANDLE hToken = nullptr; LUID luid; TOKEN_PRIVILEGES tkp;
+  if (OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken)) {
+    if (LookupPrivilegeValue(nullptr, SE_DEBUG_NAME, &luid)) {
+      tkp.PrivilegeCount = 1; tkp.Privileges[0].Luid = luid;
+      tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+      if (AdjustTokenPrivileges(hToken, false, &tkp, sizeof(tkp), nullptr, nullptr)) {
+        proc = OpenProcess(PROCESS_ALL_ACCESS, false, procId);
+      }
+	}
+    CloseHandle(hToken);
+  }
+  return proc;
 }
 
-bool IsX86Process(HANDLE procHandle) {
+bool IsX86Process(HANDLE proc) {
   bool isWow = true;
   SYSTEM_INFO systemInfo = { 0 };
   GetNativeSystemInfo(&systemInfo);
   if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_INTEL)
     return isWow;
-  IsWow64Process(procHandle, (PBOOL)&isWow);
+  IsWow64Process(proc, (PBOOL)&isWow);
   return isWow;
 }
 
@@ -225,21 +230,21 @@ std::string ExecuteProcessAndReadOutput(std::string command) {
 #endif
 
 void CwdCmdEnvFromProcId(PROCID procId, wchar_t **buffer, int type) {
-  HANDLE procHandle = OpenProcessWithDebugPrivilege(procId);
-  if (procHandle == nullptr) return;
-  if (!IsMatchingArch(procHandle))
-  { CloseHandle(procHandle); return; } 
+  HANDLE proc = OpenProcessWithDebugPrivilege(procId);
+  if (proc == nullptr) return;
+  if (!IsMatchingArch(proc))
+  { CloseHandle(proc); return; } 
   PEB peb; SIZE_T nRead; ULONG len = 0;
   PROCESS_BASIC_INFORMATION pbi;
   RTL_USER_PROCESS_PARAMETERS upp;
   typedef NTSTATUS (__stdcall *NTQIP)(HANDLE, PROCESSINFOCLASS, PVOID, ULONG, PULONG);
   NTQIP NtQueryInformationProcess = NTQIP(GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "NtQueryInformationProcess"));
-  NTSTATUS status = NtQueryInformationProcess(procHandle, ProcessBasicInformation, &pbi, sizeof(pbi), &len);
-  if (status) { CloseHandle(procHandle); return; }
-  ReadProcessMemory(procHandle, pbi.PebBaseAddress, &peb, sizeof(peb), &nRead);
-  if (!nRead) { CloseHandle(procHandle); return; }
-  ReadProcessMemory(procHandle, peb.ProcessParameters, &upp, sizeof(upp), &nRead);
-  if (!nRead) { CloseHandle(procHandle); return; }
+  NTSTATUS status = NtQueryInformationProcess(proc, ProcessBasicInformation, &pbi, sizeof(pbi), &len);
+  if (status) { CloseHandle(proc); return; }
+  ReadProcessMemory(proc, pbi.PebBaseAddress, &peb, sizeof(peb), &nRead);
+  if (!nRead) { CloseHandle(proc); return; }
+  ReadProcessMemory(proc, peb.ProcessParameters, &upp, sizeof(upp), &nRead);
+  if (!nRead) { CloseHandle(proc); return; }
   PVOID buf = nullptr; len = 0;
   if (type == MEMCWD) {
     buf = upp.CurrentDirectoryPath.Buffer;
@@ -252,8 +257,8 @@ void CwdCmdEnvFromProcId(PROCID procId, wchar_t **buffer, int type) {
     len = upp.CommandLine.Length;
   }
   wchar_t *res = new wchar_t[len / 2 + 1];
-  ReadProcessMemory(procHandle, buf, res, len, &nRead);
-  if (!nRead) { CloseHandle(procHandle); return; }
+  ReadProcessMemory(proc, buf, res, len, &nRead);
+  if (!nRead) { CloseHandle(proc); return; }
   res[len / 2] = L'\0'; *buffer = res;
 }
 #endif
@@ -406,10 +411,10 @@ bool ProcIdKill(PROCID procId) {
   #if !defined(_WIN32)
   return (kill(procId, SIGKILL) == 0);
   #elif defined(_WIN32)
-  HANDLE procHandle = OpenProcessWithDebugPrivilege(procId);
-  if (procHandle == nullptr) return false;
-  bool result = TerminateProcess(procHandle, 0);
-  CloseHandle(procHandle);
+  HANDLE proc = OpenProcessWithDebugPrivilege(procId);
+  if (proc == nullptr) return false;
+  bool result = TerminateProcess(proc, 0);
+  CloseHandle(proc);
   return result;
   #else
   return false;
@@ -505,14 +510,14 @@ void ProcIdFromParentProcId(PROCID parentProcId, PROCID **procId, int *size) {
 void ExeFromProcId(PROCID procId, char **buffer) {
   if (!ProcIdExists(procId)) return;
   #if defined(_WIN32)
-  HANDLE procHandle = OpenProcessWithDebugPrivilege(procId);
-  if (procHandle == nullptr) return;
+  HANDLE proc = OpenProcessWithDebugPrivilege(procId);
+  if (proc == nullptr) return;
   wchar_t exe[MAX_PATH]; DWORD size = MAX_PATH;
-  if (QueryFullProcessImageNameW(procHandle, 0, exe, &size)) {
+  if (QueryFullProcessImageNameW(proc, 0, exe, &size)) {
     static std::string str; str = narrow(exe);
     *buffer = (char *)str.c_str();
   }
-  CloseHandle(procHandle);
+  CloseHandle(proc);
   #elif (defined(__APPLE__) && defined(__MACH__))
   char exe[PROC_PIDPATHINFO_MAXSIZE];
   if (proc_pidpath(procId, exe, sizeof(exe)) > 0) {
@@ -573,6 +578,7 @@ void CwdFromProcId(PROCID procId, char **buffer) {
   #if defined(_WIN32)
   #if defined(EXE_INCLUDES)
   HANDLE proc = OpenProcessWithDebugPrivilege(procId);
+  if (proc == nullptr) return;
   if (!IsMatchingArch(proc)) {
     static std::string str;
     std::string exe; std::string tmp = EnvironmentGetVariable("TMP");
@@ -658,6 +664,7 @@ void CmdlineFromProcId(PROCID procId, char ***buffer, int *size) {
   #if defined(_WIN32)
   #if defined(EXE_INCLUDES)
   HANDLE proc = OpenProcessWithDebugPrivilege(procId);
+  if (proc == nullptr) return;
   if (!IsMatchingArch(proc)) {
     std::string exe; std::string tmp = EnvironmentGetVariable("TMP");
     if (IsX86Process(proc)) { exe = tmp + "\\crossprocess32.exe"; } 
@@ -818,8 +825,8 @@ void EnvironFromProcId(PROCID procId, char ***buffer, int *size) {
   #if defined(_WIN32)
   #if defined(EXE_INCLUDES)
   HANDLE proc = OpenProcessWithDebugPrivilege(procId);
+  if (proc == nullptr) return;
   if (!IsMatchingArch(proc)) {
-    HANDLE proc = OpenProcessWithDebugPrivilege(procId);
     std::string exe; std::string tmp = EnvironmentGetVariable("TMP");
     if (IsX86Process(proc)) { exe = tmp + "\\crossprocess32.exe"; } 
     else { exe = tmp + "\\crossprocess64.exe"; }
