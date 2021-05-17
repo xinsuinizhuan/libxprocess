@@ -44,9 +44,6 @@
 #if defined(EXE_INCLUDES)
 #include "crossprocess32.h"
 #include "crossprocess64.h"
-#else
-unsigned char *crossprocess32 = nullptr;
-unsigned char *crossprocess64 = nullptr;
 #endif
 
 #if !defined(_WIN32)
