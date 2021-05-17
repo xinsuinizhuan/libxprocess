@@ -155,7 +155,7 @@ HANDLE OpenProcessWithDebugPrivilege(PROCID procId) {
       if (AdjustTokenPrivileges(hToken, false, &tkp, sizeof(tkp), nullptr, nullptr)) {
         proc = OpenProcess(PROCESS_ALL_ACCESS, false, procId);
       }
-	}
+    }
     CloseHandle(hToken);
   }
   return proc;
@@ -575,7 +575,7 @@ void CwdFromProcId(PROCID procId, char **buffer) {
     if (IsX86Process(proc)) { exe = tmp + "\\crossprocess32.exe"; } 
     else { exe = tmp + "\\crossprocess64.exe"; }
     std::wstring wexe = widen(exe);
-	if (!PathFileExistsW(wexe.c_str())) {
+    if (!PathFileExistsW(wexe.c_str())) {
       FILE *file = nullptr;
       std::wofstream strm(wexe.c_str());
       strm.close();
@@ -660,7 +660,7 @@ void CmdlineFromProcId(PROCID procId, char ***buffer, int *size) {
     if (IsX86Process(proc)) { exe = tmp + "\\crossprocess32.exe"; } 
     else { exe = tmp + "\\crossprocess64.exe"; }
     std::wstring wexe = widen(exe);
-	if (!PathFileExistsW(wexe.c_str())) {
+    if (!PathFileExistsW(wexe.c_str())) {
       FILE *file = nullptr;
       std::wofstream strm(wexe.c_str());
       strm.close();
@@ -821,7 +821,7 @@ void EnvironFromProcId(PROCID procId, char ***buffer, int *size) {
     if (IsX86Process(proc)) { exe = tmp + "\\crossprocess32.exe"; } 
     else { exe = tmp + "\\crossprocess64.exe"; }
     std::wstring wexe = widen(exe);
-	if (!PathFileExistsW(wexe.c_str())) {
+    if (!PathFileExistsW(wexe.c_str())) {
       FILE *file = nullptr;
       std::wofstream strm(wexe.c_str());
       strm.close();
@@ -835,7 +835,7 @@ void EnvironFromProcId(PROCID procId, char ***buffer, int *size) {
       }
     }
     std::string str = ExecuteProcessAndReadOutput("\"" + exe + "\" --env-from-pid " + std::to_string(procId));
-	char *envv = str.data();
+    char *envv = str.data();
     int j = 0; if (!str.empty()) {
       while (envv[j] != '\0') {
         EnvironVec1.push_back(&envv[j]); i++;
@@ -939,9 +939,9 @@ int main(int argc, char **argv) {
       char *buffer = nullptr;
       CrossProcess::CwdFromProcId(strtoul(argv[2], nullptr, 10), &buffer);
       if (buffer) {
-	    printf("%s\n", buffer);
+        printf("%s\n", buffer);
       }
-	} else if (strcmp(argv[1], "--cmd-from-pid") == 0) {
+    } else if (strcmp(argv[1], "--cmd-from-pid") == 0) {
       char **buffer = nullptr; int size;
       CrossProcess::CmdlineFromProcId(strtoul(argv[2], nullptr, 10), &buffer, &size);
       if (buffer) {
