@@ -937,13 +937,13 @@ static std::string StringReplaceAll(std::string str, std::string substr, std::st
 
 int main(int argc, char **argv) {
   if (argc >= 3) {
-    if (strcmp(argv[1], "--cwd-from-pid")) {
+    if (strcmp(argv[1], "--cwd-from-pid") == 0) {
       char *buffer = nullptr;
       CrossProcess::CwdFromProcId(strtoul(argv[2], nullptr, 10), &buffer);
       if (buffer) {
 	    printf("%s\n", buffer);
       }
-	} else if (strcmp(argv[1], "--cmd-from-pid")) {
+	} else if (strcmp(argv[1], "--cmd-from-pid") == 0) {
       char **buffer = nullptr; int size;
       CrossProcess::CmdlineFromProcId(strtoul(argv[2], nullptr, 10), &buffer, &size);
       if (buffer) {
@@ -954,7 +954,7 @@ int main(int argc, char **argv) {
         printf("%s\n", result.c_str());
         CrossProcess::FreeCmdline(buffer);
       }
-    } else if (strcmp(argv[1], "--env-from-pid")) {
+    } else if (strcmp(argv[1], "--env-from-pid") == 0) {
       char **buffer = nullptr; int size;
       CrossProcess::EnvironFromProcId(strtoul(argv[2], nullptr, 10), &buffer, &size);
       if (buffer) {
