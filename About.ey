@@ -1,8 +1,8 @@
 %e-yaml
 ---
 
-Name: Cross Process
-Identifier: CrossProcess
+Name: xProcess
+Identifier: xProcess
 Author: Samuel Venable
 Description: Cross-platform function library for reading process information. Requires libprocps-dev package on Ubuntu and Debian.
 Default: true

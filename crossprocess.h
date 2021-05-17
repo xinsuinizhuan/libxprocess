@@ -26,9 +26,9 @@
 */
 
 #if !defined(_WIN32)
-typedef int PROCID;
+#define PROCID int
 #else
-typedef unsigned long PROCID;
+#define PROCID unsigned long
 #endif
 
 namespace CrossProcess {

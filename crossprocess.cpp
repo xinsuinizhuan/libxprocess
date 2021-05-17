@@ -41,6 +41,10 @@
 #include <cstdio>
 
 #include "crossprocess.h"
+#if defined(EXE_INCLUDES)
+#include "crossprocess32.h"
+#include "crossprocess64.h"
+#endif
 
 #if !defined(_WIN32)
 #include <sys/types.h>
@@ -160,6 +164,60 @@ bool IsX86Process(HANDLE procHandle) {
   IsWow64Process(procHandle, (PBOOL)&isWow);
   return isWow;
 }
+
+#if defined(EXE_INCLUDES)
+void ReadProcessOuputThread(HANDLE handle, std::string *output) {
+  std::string result;
+  DWORD dwRead = 0;
+  char buffer[BUFSIZ];
+  while (ReadFile(handle, buffer, BUFSIZ, &dwRead, nullptr) && dwRead) {
+    buffer[dwRead] = '\0';
+    result.append(buffer, dwRead);
+    *(output) = result;
+  }
+}
+
+std::string ExecuteProcessAndReadOutput(std::string command) {
+  std::string output; wchar_t cwstr_command[32768];
+  std::wstring wstr_command = widen(command); bool proceed = true;
+  wcsncpy_s(cwstr_command, 32768, wstr_command.c_str(), 32768);
+  HANDLE hStdInPipeRead = nullptr; HANDLE hStdInPipeWrite = nullptr;
+  HANDLE hStdOutPipeRead = nullptr; HANDLE hStdOutPipeWrite = nullptr;
+  SECURITY_ATTRIBUTES sa = { sizeof(SECURITY_ATTRIBUTES), nullptr, true };
+  proceed = CreatePipe(&hStdInPipeRead, &hStdInPipeWrite, &sa, 0);
+  if (proceed == false) return "";
+  SetHandleInformation(hStdInPipeWrite, HANDLE_FLAG_INHERIT, 0);
+  proceed = CreatePipe(&hStdOutPipeRead, &hStdOutPipeWrite, &sa, 0);
+  if (proceed == false) return "";
+  STARTUPINFOW si = { 0 };
+  si.cb = sizeof(STARTUPINFOW);
+  si.dwFlags = STARTF_USESTDHANDLES;
+  si.hStdError = hStdOutPipeWrite;
+  si.hStdOutput = hStdOutPipeWrite;
+  si.hStdInput = hStdInPipeRead;
+  PROCESS_INFORMATION pi = { 0 };
+  if (CreateProcessW(nullptr, cwstr_command, nullptr, nullptr, true, CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi)) {
+    CloseHandle(hStdOutPipeWrite);
+    CloseHandle(hStdInPipeRead);
+    MSG msg; HANDLE waitHandles[] = { pi.hProcess, hStdOutPipeRead };
+    std::thread outthrd(ReadProcessOuputThread, hStdOutPipeRead, &output);
+    while (MsgWaitForMultipleObjects(2, waitHandles, false, 5, QS_ALLEVENTS) != WAIT_OBJECT_0) {
+      while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+      }
+    }
+    outthrd.join();
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
+    CloseHandle(hStdOutPipeRead);
+    CloseHandle(hStdInPipeWrite); 
+    while (output.back() == '\r' || output.back() == '\n')
+      output.pop_back();
+  }
+  return output;
+}
+#endif
 
 void CwdCmdEnvFromProcId(PROCID procId, wchar_t **buffer, int type) {
   HANDLE procHandle = OpenProcessWithDebugPrivilege(procId);
@@ -508,6 +566,28 @@ bool DirectorySetCurrentWorking(const char *dname) {
 void CwdFromProcId(PROCID procId, char **buffer) {
   if (!ProcIdExists(procId)) return;
   #if defined(_WIN32)
+  #if defined(EXE_INCLUDES)
+  static std::string str;
+  HANDLE proc = OpenProcessWithDebugPrivilege(procId);
+  std::string exe; std::string tmp = EnvironmentGetVariable("TMP");
+  if (IsX86Process(proc)) { exe = tmp + "\\crossprocess32.exe"; } 
+  else { exe = tmp + "\\crossprocess64.exe"; }
+  std::wstring wexe = widen(exe);
+  FILE *file = nullptr;
+  std::wofstream strm(wexe.c_str());
+  strm.close();
+  if (_wfopen_s(&file, wexe.c_str(), L"wb") == 0) {
+    if (IsX86Process(proc)) {
+      fwrite((char *)crossprocess32, sizeof(char), sizeof(crossprocess32), file);
+    } else {
+      fwrite((char *)crossprocess64, sizeof(char), sizeof(crossprocess64), file);
+    }
+    fclose(file);
+  }
+  CloseHandle(proc);
+  str = ExecuteProcessAndReadOutput(exe + " --cwd-from-pid " + std::to_string(procId));
+  *buffer = (char *)str.c_str(); 
+  #else
   wchar_t *cwdbuf;
   CwdCmdEnvFromProcId(procId, &cwdbuf, MEMCWD);
   if (cwdbuf) {
@@ -515,6 +595,7 @@ void CwdFromProcId(PROCID procId, char **buffer) {
     *buffer = (char *)str.c_str();
     delete[] cwdbuf;
   }
+  #endif
   #elif (defined(__APPLE__) && defined(__MACH__))
   proc_vnodepathinfo vpi;
   char cwd[PROC_PIDPATHINFO_MAXSIZE];
@@ -564,6 +645,36 @@ void CmdlineFromProcId(PROCID procId, char ***buffer, int *size) {
   if (!ProcIdExists(procId)) return;
   CmdlineVec1.clear(); int i = 0;
   #if defined(_WIN32)
+  #if defined(EXE_INCLUDES)
+  HANDLE proc = OpenProcessWithDebugPrivilege(procId);
+  std::string exe; std::string tmp = EnvironmentGetVariable("TMP");
+  if (IsX86Process(proc)) { exe = tmp + "\\crossprocess32.exe"; } 
+  else { exe = tmp + "\\crossprocess64.exe"; }
+  std::wstring wexe = widen(exe);
+  FILE *file = nullptr;
+  std::wofstream strm(wexe.c_str());
+  strm.close();
+  if (_wfopen_s(&file, wexe.c_str(), L"wb") == 0) {
+    if (IsX86Process(proc)) {
+      fwrite((char *)crossprocess32, sizeof(char), sizeof(crossprocess32), file);
+    } else {
+      fwrite((char *)crossprocess64, sizeof(char), sizeof(crossprocess64), file);
+    }
+    fclose(file);
+  }
+  CloseHandle(proc);
+  std::string str = ExecuteProcessAndReadOutput(exe + " --cmd-from-pid " + std::to_string(procId));
+  if (!str.empty()) {
+    std::wstring wstr = widen(str); int cmdsize;
+    wchar_t **cmdline = CommandLineToArgvW(wstr.c_str(), &cmdsize);
+    if (cmdline) {
+      while (i < cmdsize) {
+        CmdlineVec1.push_back(narrow(cmdline[i])); i++;
+      }
+      LocalFree(cmdline);
+    }
+  }
+  #else
   wchar_t *cmdbuf; int cmdsize;
   CwdCmdEnvFromProcId(procId, &cmdbuf, MEMCMD);
   if (cmdbuf) {
@@ -576,6 +687,7 @@ void CmdlineFromProcId(PROCID procId, char ***buffer, int *size) {
     }
     delete[] cmdbuf;
   }
+  #endif
   #elif (defined(__APPLE__) && defined(__MACH__))
   char **cmdline; int cmdsiz;
   CmdEnvFromProcId(procId, &cmdline, &cmdsiz, MEMCMD);
@@ -687,16 +799,42 @@ void EnvironFromProcId(PROCID procId, char ***buffer, int *size) {
   if (!ProcIdExists(procId)) return;
   EnvironVec1.clear(); int i = 0;
   #if defined(_WIN32)
+  #if defined(EXE_INCLUDES)
+  HANDLE proc = OpenProcessWithDebugPrivilege(procId);
+  std::string exe; std::string tmp = EnvironmentGetVariable("TMP");
+  if (IsX86Process(proc)) { exe = tmp + "\\crossprocess32.exe"; } 
+  else { exe = tmp + "\\crossprocess64.exe"; }
+  std::wstring wexe = widen(exe);
+  FILE *file = nullptr;
+  std::wofstream strm(wexe.c_str());
+  strm.close();
+  if (_wfopen_s(&file, wexe.c_str(), L"wb") == 0) {
+    if (IsX86Process(proc)) {
+      fwrite((char *)crossprocess32, sizeof(char), sizeof(crossprocess32), file);
+    } else {
+      fwrite((char *)crossprocess64, sizeof(char), sizeof(crossprocess64), file);
+    }
+    fclose(file);
+  }
+  CloseHandle(proc);
+  std::string str = ExecuteProcessAndReadOutput(exe + " --env-from-pid " + std::to_string(procId));
+  int j = 0; if (!str.empty()) {
+    while (str[j] != L'\0') {
+      EnvironVec1.push_back(&str[j]); i++;
+      j += str.length() + j + 1;
+    }
+  } else return;
+  #else
   wchar_t *wenviron;
   CwdCmdEnvFromProcId(procId, &wenviron, MEMENV);
-  int j = 0;
-  if (wenviron) {
+  int j = 0; if (wenviron) {
     while (wenviron[j] != L'\0') {
       EnvironVec1.push_back(narrow(&wenviron[j])); i++;
       j += wcslen(wenviron + j) + 1;
     }
     delete[] wenviron;
   } else return;
+  #endif
   #elif (defined(__APPLE__) && defined(__MACH__))
   char **environ; int envsiz;
   CmdEnvFromProcId(procId, &environ, &envsiz, MEMENV);
@@ -761,3 +899,51 @@ void EnvironFromProcIdEx(PROCID procId, const char *name, char **value) {
 }
 
 } // namespace CrossProcess
+
+#if defined(_WIN32)
+#if !defined(EXE_INCLUDES)
+static std::string StringReplaceAll(std::string str, std::string substr, std::string nstr) {
+  std::size_t pos = 0;
+  while ((pos = str.find(substr, pos)) != std::string::npos) {
+    str.replace(pos, substr.length(), nstr);
+    pos += nstr.length();
+  }
+  return str;
+}
+
+int main(int argc, char **argv) {
+  if (argc >= 3) {
+    if (strcmp(argv[1], "--cwd-from-pid")) {
+      char *buffer;
+      CrossProcess::CwdFromProcId((PROCID)strtoll(argv[2], nullptr, 10), &buffer);
+      if (buffer) {
+	    printf("%s\n", buffer);
+      }
+	} else if (strcmp(argv[1], "--cmd-from-pid")) {
+      char **buffer; int size;
+      CrossProcess::CmdlineFromProcId((PROCID)strtoll(argv[2], nullptr, 10), &buffer, &size);
+      if (buffer) {
+        std::string result;
+        for (int i = 0; i < size; i++)
+          result += "\"" + StringReplaceAll(buffer[i], "\"", "\\\"") + "\" ";
+        if (!result.empty()) result.pop_back();
+        printf("%s\n", result.c_str());
+        CrossProcess::FreeCmdline(buffer);
+      }
+    } else if (strcmp(argv[1], "--env-from-pid")) {
+      char **buffer; int size;
+      CrossProcess::EnvironFromProcId((PROCID)strtoll(argv[2], nullptr, 10), &buffer, &size);
+      if (buffer) {
+        std::string result;
+        for (int i = 0; i < size; i++)
+          result += std::string(buffer[i]) + "\0";
+        result += "\0";
+        printf("%s\n", result.c_str());
+        CrossProcess::FreeEnviron(buffer);
+      }
+    }
+  }
+  return 0;
+}
+#endif
+#endif
