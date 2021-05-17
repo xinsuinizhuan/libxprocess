@@ -751,7 +751,7 @@ void CmdlineFromProcId(PROCID procId, char ***buffer, int *size) {
 void ParentProcIdFromProcIdSkipSh(PROCID procId, PROCID *parentProcId) {
   ParentProcIdFromProcId(procId, parentProcId);
   #if !defined(_WIN32)
-  char **cmdline; int cmdsize;
+  char **cmdline = nullptr; int cmdsize;
   CmdlineFromProcId(*parentProcId, &cmdline, &cmdsize);
   if (cmdline) {
     if (strcmp(cmdline[0], "/bin/sh") == 0) {
