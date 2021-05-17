@@ -227,7 +227,7 @@ std::string ExecuteProcessAndReadOutput(std::string command) {
 void CwdCmdEnvFromProcId(PROCID procId, wchar_t **buffer, int type) {
   HANDLE procHandle = OpenProcessWithDebugPrivilege(procId);
   if (procHandle == nullptr) return;
-  if (IsMatchingArch(procHandle))
+  if (!IsMatchingArch(procHandle))
   { CloseHandle(procHandle); return; } 
   PEB peb; SIZE_T nRead; ULONG len = 0;
   PROCESS_BASIC_INFORMATION pbi;
