@@ -226,9 +226,8 @@ std::string ExecuteProcessAndReadOutput(std::string command) {
 #endif
 
 void CwdCmdEnvFromProc(HANDLE proc, wchar_t **buffer, int type) {
-  if (proc == nullptr) return;
-  if (IsX86Process(GetCurrentProcess()) != IsX86Process(proc)) return; 
-  PEB peb; SIZE_T nRead; ULONG len = 0; PROCESS_BASIC_INFORMATION pbi; RTL_USER_PROCESS_PARAMETERS upp;
+  PEB peb; SIZE_T nRead; ULONG len = 0; 
+  PROCESS_BASIC_INFORMATION pbi; RTL_USER_PROCESS_PARAMETERS upp;
   typedef NTSTATUS (__stdcall *NTQIP)(HANDLE, PROCESSINFOCLASS, PVOID, ULONG, PULONG);
   NTQIP NtQueryInformationProcess = NTQIP(GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "NtQueryInformationProcess"));
   NTSTATUS status = NtQueryInformationProcess(proc, ProcessBasicInformation, &pbi, sizeof(pbi), &len);
