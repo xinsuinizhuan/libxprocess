@@ -29,8 +29,9 @@
 
 namespace enigma_user {
 
-inline void Free(void *ptr) { free(ptr); }
+using CrossProcess::PROCINFO;
 using CrossProcess::ProcIdEnumerate;
+using CrossProcess::FreeProcIds;
 using CrossProcess::ProcIdFromSelf;
 using CrossProcess::ParentProcIdFromSelf;
 using CrossProcess::ProcIdExists;
@@ -50,5 +51,7 @@ using CrossProcess::EnvironmentSetVariable;
 using CrossProcess::FreeEnviron;
 using CrossProcess::EnvironFromProcId;
 using CrossProcess::EnvironFromProcIdEx;
+using CrossProcess::ProcInfoFromProcId;
+using CrossProcess::FreeProcInfo;
 
 } // namespace enigma_user
