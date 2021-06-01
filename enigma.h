@@ -29,6 +29,7 @@
 
 namespace enigma_user {
 
+using CrossProcess::PROCID;
 using CrossProcess::PROCINFO;
 using CrossProcess::ProcIdEnumerate;
 using CrossProcess::FreeProcIds;
@@ -51,7 +52,28 @@ using CrossProcess::EnvironmentSetVariable;
 using CrossProcess::FreeEnviron;
 using CrossProcess::EnvironFromProcId;
 using CrossProcess::EnvironFromProcIdEx;
+using CrossProcess::ProcInfoFromInternalProcInfo;
+using CrossProcess::InternalProcInfoFromProcInfo;
 using CrossProcess::ProcInfoFromProcId;
 using CrossProcess::FreeProcInfo;
+using CrossProcess::ProcessId;
+using CrossProcess::ExecutableImageFilePath;
+using CrossProcess::CurrentWorkingDirectory;
+using CrossProcess::ParentProcessId;
+using CrossProcess::ChildProcessId;
+using CrossProcess::ChildProcessIdLength;
+using CrossProcess::CommandLine;
+using CrossProcess::CommandLineLength;
+using CrossProcess::Environment;
+using CrossProcess::EnvironmentLength;
+#if defined(XPROCESS_GUIWINDOW_IMPL)
+using CrossProcess::WindowIdFromNativeWindow(WINDOW window);
+using CrossProcess::NativeWindowFromWindowId(WINDOWID winid);
+using CrossProcess::ProcIdFromWindowId(WINDOWID winId, PROCID *procId);
+using CrossProcess::WindowIdFromProcId(PROCID procId, WINDOWID **winId, int *size);
+using CrossProcess::FreeWindowIds(WINDOWID *winId);
+using CrossProcess::OwnedWindowId;
+using CrossProcess::OwnedWindowIdLength;
+#endif
 
 } // namespace enigma_user
