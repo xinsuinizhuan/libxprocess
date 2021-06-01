@@ -70,11 +70,11 @@ using CrossProcess::EnvironmentLength;
 #if defined(XPROCESS_GUIWINDOW_IMPL)
 using CrossProcess::WINDOW;
 using CrossProcess::WINDOWID;
-using CrossProcess::WindowIdFromNativeWindow(WINDOW window);
-using CrossProcess::NativeWindowFromWindowId(WINDOWID winid);
-using CrossProcess::ProcIdFromWindowId(WINDOWID winId, PROCID *procId);
-using CrossProcess::WindowIdFromProcId(PROCID procId, WINDOWID **winId, int *size);
-using CrossProcess::FreeWindowIds(WINDOWID *winId);
+using CrossProcess::WindowIdFromNativeWindow;
+using CrossProcess::NativeWindowFromWindowId;
+using CrossProcess::ProcIdFromWindowId;
+using CrossProcess::WindowIdFromProcId;
+using CrossProcess::FreeWindowIds;
 using CrossProcess::OwnedWindowId;
 using CrossProcess::OwnedWindowIdLength;
 #endif
