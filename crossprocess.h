@@ -24,36 +24,21 @@
  SOFTWARE.
  
 */
- 
-#if !defined(_WIN32)
-#include <sys/types.h>
-#else
-#include <windows.h>
-#endif
-
-#if defined(XPROCESS_GUIWINDOW_IMPL)
-#if (defined(__APPLE__) && defined(__MACH__)) && !defined(XPROCESS_XQUARTZ_IMPL)
-#include <CoreGraphics/CoreGraphics.h>
-#include <CoreFoundation/CoreFoundation.h>
-#elif (defined(__linux__) && !defined(__ANDROID__)) || defined(__FreeBSD__) || defined(XPROCESS_XQUARTZ_IMPL)
-#include <X11/Xlib.h>
-#endif
-#endif
 
 namespace CrossProcess {
 
 #if !defined(_WIN32)
-typedef pid_t PROCID;
+typedef int PROCID;
 #else
-typedef DWORD PROCID;
+typedef unsigned long PROCID;
 #endif
 #if defined(XPROCESS_GUIWINDOW_IMPL)
 #if defined(_WIN32)
-typedef HWND WINDOW;
+typedef void *WINDOW;
 #elif (defined(__APPLE__) && defined(__MACH__)) && !defined(XPROCESS_XQUARTZ_IMPL)
-typedef CGWindowID WINDOW;
+typedef unsigned int WINDOW;
 #elif (defined(__linux__) && !defined(__ANDROID__)) || defined(__FreeBSD__) || defined(XPROCESS_XQUARTZ_IMPL)
-typedef Window WINDOW;
+typedef unsigned long WINDOW;
 #endif
 typedef char *WINDOWID;
 #endif

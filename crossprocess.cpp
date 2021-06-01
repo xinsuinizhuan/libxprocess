@@ -49,9 +49,11 @@
 #if !defined(_WIN32)
 #include <signal.h>
 #include <unistd.h>
+#include <sys/types.h>
 #endif
 
 #if defined(_WIN32)
+#include <windows.h>
 #include <shlwapi.h>
 #include <Objbase.h>
 #include <tlhelp32.h>
@@ -71,6 +73,15 @@
 #include <sys/user.h>
 #include <libprocstat.h>
 #include <libutil.h>
+#endif
+
+#if defined(XPROCESS_GUIWINDOW_IMPL)
+#if (defined(__APPLE__) && defined(__MACH__)) && !defined(XPROCESS_XQUARTZ_IMPL)
+#include <CoreGraphics/CoreGraphics.h>
+#include <CoreFoundation/CoreFoundation.h>
+#elif (defined(__linux__) && !defined(__ANDROID__)) || defined(__FreeBSD__) || defined(XPROCESS_XQUARTZ_IMPL)
+#include <X11/Xlib.h>
+#endif
 #endif
 
 using CrossProcess::PROCID;
