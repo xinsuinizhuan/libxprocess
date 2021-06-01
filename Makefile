@@ -1,3 +1,5 @@
+override CXXFLAGS += -DXPROCESS_GUIWINDOW_IMPL
+override CFLAGS += -DXPROCESS_GUIWINDOW_IMPL
 ifeq ($(UNIX_BASED), true)
 	ifeq ($(OS), Darwin)
 		override LDLIBS += -framework CoreFoundation  -framework CoreGraphics
@@ -18,5 +20,3 @@ else
 endif
 SOURCES += Universal_System/Extensions/xProcess/crossprocess.cpp
 SOURCES += Universal_System/Extensions/xProcess/enigma.cpp
-override CXXFLAGS += -DXPROCESS_GUIWINDOW_IMPL
-override CFLAGS += -DXPROCESS_GUIWINDOW_IMPL
