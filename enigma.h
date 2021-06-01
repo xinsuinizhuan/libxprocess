@@ -25,7 +25,7 @@
  
 */
 
-#include <cstdlib>
+#include "crossprocess.h"
 
 namespace enigma_user {
 
