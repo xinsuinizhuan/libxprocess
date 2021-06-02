@@ -27,9 +27,7 @@
 
 #if defined(XPROCESS_GUIWINDOW_IMPL)
 #if defined(_WIN32)
-#define byte __windows_byte_workaround
 #include <windows.h>
-#undef byte
 #else
 #if (defined(__APPLE__) && defined(__MACH__)) && !defined(XPROCESS_XQUARTZ_IMPL)
 #include <CoreGraphics/CoreGraphics.h>
@@ -76,7 +74,7 @@ typedef struct {
 } _PROCINFO;
 
 void ProcIdEnumerate(PROCID **procId, int *size);
-void FreeProcIds(PROCID *procId);
+void FreeProcId(PROCID *procId);
 void ProcIdFromSelf(PROCID *procId);
 void ParentProcIdFromSelf(PROCID *parentProcId);
 bool ProcIdExists(PROCID procId);
@@ -99,13 +97,18 @@ void EnvironFromProcIdEx(PROCID procId, const char *name, char **value);
  PROCINFO  ProcInfoFromInternalProcInfo(_PROCINFO *procInfo);
 _PROCINFO *InternalProcInfoFromProcInfo( PROCINFO  procInfo);
  PROCINFO ProcInfoFromProcId(PROCID procId);
+_PROCINFO *InternalProcInfoFromProcId(PROCID procId);
 void FreeProcInfo(PROCINFO procInfo);
+void FreeInternalProcInfo(_PROCINFO *procInfo);
 #if defined(XPROCESS_GUIWINDOW_IMPL)
 WINDOWID WindowIdFromNativeWindow(WINDOW window);
 WINDOW NativeWindowFromWindowId(WINDOWID winid);
+void WindowIdEnumerate(WINDOWID **winId, int *size);
 void ProcIdFromWindowId(WINDOWID winId, PROCID *procId);
 void WindowIdFromProcId(PROCID procId, WINDOWID **winId, int *size);
-void FreeWindowIds(WINDOWID *winId);
+void FreeWindowId(WINDOWID *winId);
+bool WindowIdExists(WINDOWID winId);
+bool WindowIdKill(WINDOWID winId);
 #endif
 
 inline PROCID ProcessId(PROCINFO procInfo) { return InternalProcInfoFromProcInfo(procInfo)->ProcessId; }

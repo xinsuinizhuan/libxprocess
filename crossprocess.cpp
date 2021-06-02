@@ -385,7 +385,7 @@ void ProcIdEnumerate(PROCID **procId, int *size) {
   }
 }
 
-void FreeProcIds(PROCID *procId) {
+void FreeProcId(PROCID *procId) {
   if (procId) {
     free(procId);
   }
@@ -990,12 +990,12 @@ WINDOWID WindowIdFromNativeWindow(WINDOW window) {
   return (WINDOWID)wid.c_str();
 }
 
-WINDOW NativeWindowFromWindowId(WINDOWID winid) {
+WINDOW NativeWindowFromWindowId(WINDOWID winId) {
   #if defined(_WIN32)
-  void *address; sscanf(winid, "%p", &address);
+  void *address; sscanf(winId, "%p", &address);
   WINDOW window = (WINDOW)address;
   #else
-  WINDOW window = (WINDOW)strtoull(winid, nullptr, 10);
+  WINDOW window = (WINDOW)strtoull(winId, nullptr, 10);
   #endif
   return window;
 }
@@ -1079,10 +1079,35 @@ void WindowIdFromProcId(PROCID procId, WINDOWID **winId, int *size) {
   *winId = arr; *size = i;
 }
 
-void FreeWindowIds(WINDOWID *winId) {
+void FreeWindowId(WINDOWID *winId) {
   if (winId) {
-    free(winId);
+    delete[] winId;
   }
+}
+
+static std::vector<std::string> widVec3;
+void WindowIdEnumerate(WINDOWID **winId, int *size) {
+  widVec3.clear(); int i = 0;
+  PROCID *pid = nullptr; int pidsize; 
+  ProcIdEnumerate(&pid, &pidsize);
+  if (pid) {
+    for (int j = 0; j < pidsize; j++) {
+      WINDOWID *wid = nullptr; int widsize;
+      WindowIdFromProcId(pid[j], &wid, &widsize);
+      if (wid) {
+        for (int ii = 0; ii < widsize; ii++) {
+          widVec3.push_back(wid[ii]); i++;
+        }
+        FreeWindowId(wid);
+      }
+    }
+  }
+  std::vector<WINDOWID> widVec4;
+  for (int i = 0; i < widVec3.size(); i++)
+    widVec4.push_back((WINDOWID)widVec3[i].c_str());
+  WINDOWID *arr = new WINDOWID[widVec4.size()]();
+  std::copy(widVec4.begin(), widVec4.end(), arr);
+  *winId = arr; *size = i;
 }
 
 void ProcIdFromWindowId(WINDOWID winId, PROCID *procId) {
@@ -1109,7 +1134,7 @@ void ProcIdFromWindowId(WINDOWID winId, PROCID *procId) {
             break;
           }
         }
-        FreeWindowIds(wid);
+        FreeWindowId(wid);
       }      
     }
   }
@@ -1132,6 +1157,27 @@ void ProcIdFromWindowId(WINDOWID winId, PROCID *procId) {
   *procId = (PROCID)property;
   XCloseDisplay(display);
   #endif
+  if (!ProcIdExists(*procId)) {
+    *procId = 0;
+  }
+}
+
+bool WindowIdExists(WINDOWID winId) {
+  PROCID procId;
+  ProcIdFromWindowId(winId, &procId);
+  if (procId) {
+    return ProcIdExists(procId);
+  }
+  return false;
+}
+
+bool WindowIdKill(WINDOWID winId) {
+  PROCID procId;
+  ProcIdFromWindowId(winId, &procId);
+  if (procId) {
+    return ProcIdKill(procId);
+  }
+  return false;
 }
 #endif
 
@@ -1149,7 +1195,7 @@ _PROCINFO *InternalProcInfoFromProcInfo(PROCINFO procInfo) {
   return res;
 }
 
-PROCINFO ProcInfoFromProcId(PROCID procId) {
+_PROCINFO *InternalProcInfoFromProcId(PROCID procId) {
   char *exe    = nullptr; ExeFromProcId(procId, &exe);
   char *cwd    = nullptr; CwdFromProcId(procId, &cwd);
   PROCID ppid; ParentProcIdFromProcId(procId, &ppid);
@@ -1178,17 +1224,25 @@ PROCINFO ProcInfoFromProcId(PROCID procId) {
   procInfo->OwnedWindowId           = wid;
   procInfo->OwnedWindowIdLength     = widsize;
   #endif
-  return ProcInfoFromInternalProcInfo(procInfo);
+  return procInfo;
+}
+
+PROCINFO ProcInfoFromProcId(PROCID procId) {
+  return ProcInfoFromInternalProcInfo(InternalProcInfoFromProcId(procId));
+}
+
+void FreeInternalProcInfo(_PROCINFO *procInfo) {
+  FreeProcId(procInfo->ChildProcessId);
+  FreeCmdline(procInfo->CommandLine);
+  FreeEnviron(procInfo->Environment);
+  #if defined(XPROCESS_GUIWINDOW_IMPL)
+  FreeWindowId(procInfo->OwnedWindowId);
+  #endif
+  delete procInfo;
 }
 
 void FreeProcInfo(PROCINFO procInfo) {
-  FreeProcIds(ChildProcessId(procInfo));
-  FreeCmdline(CommandLine(procInfo));
-  FreeEnviron(Environment(procInfo));
-  #if defined(XPROCESS_GUIWINDOW_IMPL)
-  FreeWindowIds(OwnedWindowId(procInfo));
-  #endif
-  delete InternalProcInfoFromProcInfo(procInfo);
+  FreeInternalProcInfo(InternalProcInfoFromProcInfo(procInfo));
 }
 
 } // namespace CrossProcess

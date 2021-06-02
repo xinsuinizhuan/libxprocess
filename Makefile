@@ -1,16 +1,8 @@
-override CXXFLAGS += -DXPROCESS_GUIWINDOW_IMPL
-override CFLAGS += -DXPROCESS_GUIWINDOW_IMPL
 ifeq ($(UNIX_BASED), true)
-	ifeq ($(OS), Darwin)
-		override LDLIBS += -framework CoreFoundation  -framework CoreGraphics
-	else ifeq ($(OS), Linux)
-		override CXXFLAGS += `pkg-config x11 --cflags`
-		override CFLAGS += `pkg-config x11 --cflags`
-		override LDLIBS += -lprocps `pkg-config x11 --libs`
+	ifeq ($(OS), Linux)
+		override LDLIBS += -lprocps
 	else ifeq ($(OS), FreeBSD)
-		override CXXFLAGS += `pkg-config x11 --cflags`
-		override CFLAGS += `pkg-config x11 --cflags`
-		override LDLIBS += -lprocstat -lutil -lc `pkg-config x11 --clibs`
+		override LDLIBS += -lprocstat -lutil -lc
 	endif
 else
 	CROSSPROCESS := $(shell "/c/msys64/msys2_shell.cmd" -defterm -mingw32 -no-start -here -lc "g++ Universal_System/Extensions/xProcess/crossprocess.cpp -o Universal_System/Extensions/xProcess/crossprocess32.exe -std=c++17 -static-libgcc -static-libstdc++ -static -lShlwapi -m32")
