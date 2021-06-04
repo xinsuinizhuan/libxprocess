@@ -1278,7 +1278,7 @@ PROCESS ProcessExecute(const char *command) {
     if (pid) { CrossProcess::FreeProcId(pid); }
     std::this_thread::sleep_for(std::chrono::milliseconds(5));
     CrossProcess::ProcIdFromParentProcIdSkipSh(procId, &pid, &pidsize);
-  } if (pidsize) { procId = pid[pidsize - 1]; }
+  } if (pidsize) { procId = pid[0]; }
   if (pid) { CrossProcess::FreeProcId(pid); }
   PROCESS procIndex = (PROCESS)procId;
   stdIptMap.insert(std::make_pair(procIndex, (std::uintptr_t)infd));
