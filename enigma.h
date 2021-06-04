@@ -30,6 +30,7 @@
 namespace enigma_user {
 
 using CrossProcess::PROCID;
+using CrossProcess::PROCESS;
 using CrossProcess::PROCINFO;
 using CrossProcess::_PROCINFO;
 using CrossProcess::ProcIdEnumerate;
@@ -69,6 +70,13 @@ using CrossProcess::CommandLine;
 using CrossProcess::CommandLineLength;
 using CrossProcess::Environment;
 using CrossProcess::EnvironmentLength;
+using CrossProcess::ProcessExecute;
+using CrossProcess::ProcessExecuteAsync;
+using CrossProcess::ExecutedProcessWriteToStandardInput;
+using CrossProcess::ExecutedProcessReadFromStandardOutput;
+using CrossProcess::FreeExecutedProcessStandardInput;
+using CrossProcess::FreeExecutedProcessStandardOutput;
+using CrossProcess::CompletionStatusFromExecutedProcess;
 #if defined(XPROCESS_GUIWINDOW_IMPL)
 using CrossProcess::WINDOW;
 using CrossProcess::WINDOWID;
