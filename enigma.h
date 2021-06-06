@@ -31,10 +31,9 @@ namespace enigma_user {
 
 using CrossProcess::PROCID;
 using CrossProcess::PROCESS;
+using CrossProcess::PROCLIST;
 using CrossProcess::PROCINFO;
 using CrossProcess::_PROCINFO;
-using CrossProcess::PROCINFOLIST;
-using CrossProcess::_PROCINFOLIST;
 using CrossProcess::ProcIdEnumerate;
 using CrossProcess::FreeProcId;
 using CrossProcess::ProcIdFromSelf;
