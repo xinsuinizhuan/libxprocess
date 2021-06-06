@@ -79,13 +79,10 @@ using CrossProcess::ExecutedProcessReadFromStandardOutput;
 using CrossProcess::FreeExecutedProcessStandardInput;
 using CrossProcess::FreeExecutedProcessStandardOutput;
 using CrossProcess::CompletionStatusFromExecutedProcess;
-using CrossProcess::ProcInfoListFromInternalProcInfoList;
-using CrossProcess::InternalProcInfoListFromProcInfoList;
-using CrossProcess::InternalProcInfoEnumerate;
-using CrossProcess::ProcInfoEnumerate;
-using CrossProcess::FreeInternalProcInfoList;
-using CrossProcess::FreeProcInfoList;
-using CrossProcess::ProcInfoListCreate;
+using CrossProcess::ProcListCreate;
+using CrossProcess::ProcessInfo;
+using CrossProcess::ProcessInfoLength;
+using CrossProcess::FreeProcList;
 using CrossProcess::ProcessInfo;
 using CrossProcess::ProcessInfoLength;
 #if defined(XPROCESS_GUIWINDOW_IMPL)
