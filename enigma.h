@@ -85,7 +85,7 @@ using CrossProcess::InternalProcInfoEnumerate;
 using CrossProcess::ProcInfoEnumerate;
 using CrossProcess::FreeInternalProcInfoList;
 using CrossProcess::FreeProcInfoList;
-using CrossProcess::ProcessInfoListCreate;
+using CrossProcess::ProcInfoListCreate;
 using CrossProcess::ProcessInfo;
 using CrossProcess::ProcessInfoLength;
 #if defined(XPROCESS_GUIWINDOW_IMPL)
