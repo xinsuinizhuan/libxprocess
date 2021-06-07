@@ -1247,7 +1247,7 @@ static inline PROCID ProcessExecuteHelper(const char *command, int *infp, int *o
     close(p_stdout[0]);
     dup2(p_stdout[1], 1);
     dup2(open("/dev/null", O_WRONLY), 2);
-    for (int i = 3; i < 4096; i++)
+    for (int i = 3; i < filesmax; i++)
       close(i);
     setsid();
     execl("/bin/sh", "/bin/sh", "-c", command, nullptr);
