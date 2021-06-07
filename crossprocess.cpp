@@ -67,8 +67,6 @@
 #include <sys/proc_info.h>
 #include <libproc.h>
 #elif (defined(__linux__) && !defined(__ANDROID__))
-#include <sys/time.h>
-#include <sys/resource.h>
 #include <proc/readproc.h>
 #elif defined(__FreeBSD__)
 #include <sys/socket.h>
@@ -1218,12 +1216,6 @@ void FreeProcInfo(PROCINFO procInfo) {
 
 #if !defined(_WIN32)
 static inline PROCID ProcessExecuteHelper(const char *command, int *infp, int *outfp) {
-  int filesmax; struct rlimit nofile_rlmt;
-  if (getrlimit(RLIMIT_NOFILE, &nofile_rlmt) == -1) {
-    return -1;
-  } else {
-    filesmax = nofile_rlmt.rlim_max;
-  }
   int p_stdin[2];
   int p_stdout[2];
   PROCID pid;
@@ -1247,7 +1239,7 @@ static inline PROCID ProcessExecuteHelper(const char *command, int *infp, int *o
     close(p_stdout[0]);
     dup2(p_stdout[1], 1);
     dup2(open("/dev/null", O_WRONLY), 2);
-    for (int i = 3; i < filesmax; i++)
+    for (int i = 3; i < 4096; i++)
       close(i);
     setsid();
     execl("/bin/sh", "/bin/sh", "-c", command, nullptr);
