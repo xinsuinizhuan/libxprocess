@@ -128,7 +128,7 @@ double EnvironmentLength(char *procInfo) {
   return CrossProcess::EnvironmentLength((PROCINFO)procInfo);
 }
 
-#if defined((XPROCESS_GUIWINDOW_IMPL)
+#if defined(XPROCESS_GUIWINDOW_IMPL)
 /* get owned window id string from process info at index; 
 on Win32 this is an address, otherwise a number string */
 char *OwnedWindowId(char *procInfo, double i) {
