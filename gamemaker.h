@@ -78,7 +78,7 @@ EXPORTED_FUNCTION char *Environment(char *procInfo, double i);
 // get amount of anvironment variables from process info at index
 EXPORTED_FUNCTION double EnvironmentLength(char *procInfo);
 
-#if defined(Xdouble_GUIWINDOW_IMPL)
+#if defined(XPROCESS_GUIWINDOW_IMPL)
 /* get owned window id string from process info at index; 
 on Win32 this is an address, otherwise a number string */
 EXPORTED_FUNCTION char *OwnedWindowId(char *procInfo, double i);
