@@ -54,89 +54,88 @@ double ProcIdKill(double procId) {
 }
 
 // create a list for all process info
-char *ProcListCreate() {
+double ProcListCreate() {
   return CrossProcess::ProcListCreate();
 }
 
 // get process info pointer based on process list at index
-char *ProcessInfo(char *procList, double i) {
+double ProcessInfo(double procList, double i) {
   return CrossProcess::ProcessInfo((PROCLIST)procList, (int)i);
 }
 
 // get the amount of process info available for iteration
-double ProcessInfoLength(char *procList) {
+double ProcessInfoLength(double procList) {
   return CrossProcess::ProcessInfoLength((PROCLIST)procList);
 }
 
 // free iterations of process info list
-double FreeProcInfo(char *procInfo) {
+double FreeProcInfo(double procInfo) {
   CrossProcess::FreeProcInfo((PROCINFO)procInfo); return 0;
 }
 
 // free list of process info, (free the iterations separately)
-double FreeProcList(char *procList) {
+double FreeProcList(double procList) {
   CrossProcess::FreeProcList((PROCLIST)procList); return 0;
 }
 
 // get process id from process info iteration
-double ProcessId(char *procInfo) {
+double ProcessId(double procInfo) {
   return CrossProcess::ProcessId((PROCINFO)procInfo);
 }
 
 // get executable image file path from process info iteration
-char *ExecutableImageFilePath(char *procInfo) {
+char *ExecutableImageFilePath(double procInfo) {
   return CrossProcess::ExecutableImageFilePath((PROCINFO)procInfo);
 }
 
 // get current working directory ffrom process info iteration
-char *CurrentWorkingDirectory(char *procInfo) {
+char *CurrentWorkingDirectory(double procInfo) {
   return CrossProcess::ExecutableImageFilePath((PROCINFO)procInfo);
 }
 
 // get parent processs id from process info iteration
-double ParentProcessId(char *procInfo) {
+double ParentProcessId(double procInfo) {
   return CrossProcess::ParentProcessId((PROCINFO)procInfo);
 }
 
 // get child process id from process info iteration at index
-double ChildProcessId(char *procInfo, double i) {
+double ChildProcessId(double procInfo, double i) {
   return CrossProcess::ChildProcessId((PROCINFO)procInfo, (int)i);
 }
 
 // get amount of child processes from process info iteration
-double ChildProcessIdLength(char *procInfo) {
+double ChildProcessIdLength(double procInfo) {
   return CrossProcess::ChildProcessIdLength((PROCINFO)procInfo);
 }
 
 // get command line argument from process info iteration at index
-char *CommandLine(char *procInfo, double i) {
+char *CommandLine(double procInfo, double i) {
   return CrossProcess::CommandLine((PROCINFO)procInfo, (int)i);
 }
 
 // get amount of command line arguments from process info iteration
-double CommandLineLength(char *procInfo) {
+double CommandLineLength(double procInfo) {
   return CrossProcess::CommandLineLength((PROCINFO)procInfo);
 }
 
 // get environment variable (NAME=VALUE) from process info at index
-char *Environment(char *procInfo, double i) {
+char *Environment(double procInfo, double i) {
   return CrossProcess::Environment((PROCINFO)procInfo, (int)i);
 }
 
 // get amount of anvironment variables from process info at index
-double EnvironmentLength(char *procInfo) {
+double EnvironmentLength(double procInfo) {
   return CrossProcess::EnvironmentLength((PROCINFO)procInfo);
 }
 
 #if defined(XPROCESS_GUIWINDOW_IMPL)
-/* get owned window id string from process info at index; 
-on Win32 this is an address, otherwise a number string */
-char *OwnedWindowId(char *procInfo, double i) {
+// get owned window id string from process info at index
+char *OwnedWindowId(double procInfo, double i) {
   return CrossProcess::OwnedWindowId((PROCINFO)procInfo, (int)i);
 }
 
 // get amount of owned window id's from process info at index
-double OwnedWindowIdLength(char *procInfo) {
+double OwnedWindowIdLength(double procInfo) {
   return CrossProcess::OwnedWindowIdLength((PROCINFO)procInfo);
 }
 

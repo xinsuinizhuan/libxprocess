@@ -34,57 +34,56 @@ EXPORTED_FUNCTION double ProcIdExists(double procId);
 EXPORTED_FUNCTION double ProcIdKill(double procId);
 
 // create a list for all process info
-EXPORTED_FUNCTION char *ProcListCreate();
+EXPORTED_FUNCTION double ProcListCreate();
 
 // get process info pointer based on process list at index
-EXPORTED_FUNCTION char *ProcessInfo(char *procList, double i);
+EXPORTED_FUNCTION double ProcessInfo(double procList, double i);
 
 // get the amount of process info available for iteration
-EXPORTED_FUNCTION double ProcessInfoLength(char *procList);
+EXPORTED_FUNCTION double ProcessInfoLength(double procList);
 
 // free iterations of process info list
-EXPORTED_FUNCTION double FreeProcInfo(char *procInfo);
+EXPORTED_FUNCTION double FreeProcInfo(double procInfo);
 
 // free list of process info, (free the iterations separately)
-EXPORTED_FUNCTION double FreeProcList(char *procList);
+EXPORTED_FUNCTION double FreeProcList(double procList);
 
 // get process id from process info iteration
-EXPORTED_FUNCTION double ProcessId(char *procInfo);
+EXPORTED_FUNCTION double ProcessId(double procInfo);
 
 // get executable image file path from process info iteration
-EXPORTED_FUNCTION char *ExecutableImageFilePath(char *procInfo);
+EXPORTED_FUNCTION char *ExecutableImageFilePath(double procInfo);
 
 // get current working directory ffrom process info iteration
-EXPORTED_FUNCTION char *CurrentWorkingDirectory(char *procInfo);
+EXPORTED_FUNCTION char *CurrentWorkingDirectory(double procInfo);
 
 // get parent processs id from process info iteration
-EXPORTED_FUNCTION double ParentProcessId(char *procInfo);
+EXPORTED_FUNCTION double ParentProcessId(double procInfo);
 
 // get child process id from process info iteration at index
-EXPORTED_FUNCTION double ChildProcessId(char *procInfo, double i);
+EXPORTED_FUNCTION double ChildProcessId(double procInfo, double i);
 
 // get amount of child processes from process info iteration
-EXPORTED_FUNCTION double ChildProcessIdLength(char *procInfo);
+EXPORTED_FUNCTION double ChildProcessIdLength(double procInfo);
 
 // get command line argument from process info iteration at index
-EXPORTED_FUNCTION char *CommandLine(char *procInfo, double i);
+EXPORTED_FUNCTION char *CommandLine(double procInfo, double i);
 
 // get amount of command line arguments from process info iteration
-EXPORTED_FUNCTION double CommandLineLength(char *procInfo);
+EXPORTED_FUNCTION double CommandLineLength(double procInfo);
 
 // get environment variable (NAME=VALUE) from process info at index
-EXPORTED_FUNCTION char *Environment(char *procInfo, double i);
+EXPORTED_FUNCTION char *Environment(double procInfo, double i);
 
 // get amount of anvironment variables from process info at index
-EXPORTED_FUNCTION double EnvironmentLength(char *procInfo);
+EXPORTED_FUNCTION double EnvironmentLength(double procInfo);
 
 #if defined(XPROCESS_GUIWINDOW_IMPL)
-/* get owned window id string from process info at index; 
-on Win32 this is an address, otherwise a number string */
-EXPORTED_FUNCTION char *OwnedWindowId(char *procInfo, double i);
+// get owned window id string from process info at index
+EXPORTED_FUNCTION char *OwnedWindowId(double procInfo, double i);
 
 // get amount of owned window id's from process info at index
-EXPORTED_FUNCTION double OwnedWindowIdLength(char *procInfo);
+EXPORTED_FUNCTION double OwnedWindowIdLength(double procInfo);
 
 // get whether a process exists based on one of its window id's
 EXPORTED_FUNCTION double WindowIdExists(char *winId);
