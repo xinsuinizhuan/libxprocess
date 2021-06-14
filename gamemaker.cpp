@@ -43,7 +43,17 @@ double FreeExecutedProcessStandardOutput(double procIndex) {
   CrossProcess::FreeExecutedProcessStandardOutput((PROCESS)procIndex); return 0;
 }
 
-// returns whether process process exists based on process id
+// get process id from self
+double ProcIdFromSelf() {
+  return CrossProcess::ProcIdFromSelf();
+}
+
+// get parent process id from self
+double ParentProcIdFromSelf() {
+  return CrossProcess::ParentProcIdFromSelf();
+}
+
+// get whether process process exists based on process id
 double ProcIdExists(double procId) {
   return CrossProcess::ProcIdExists((PROCID)procId);
 }
@@ -51,6 +61,11 @@ double ProcIdExists(double procId) {
 // kill process based on process id, return whether succeeded
 double ProcIdKill(double procId) {
   return CrossProcess::ProcIdKill((PROCID)procId);
+}
+
+// get executable image file path from self
+char *ExecuableFromSelf() {
+  return (char *)CrossProcess::ExecuableFromSelf();
 }
 
 // create a list for all process info
@@ -147,5 +162,30 @@ double WindowIdExists(char *winId) {
 // kill a process based on one of its window id's, return whether succeeded
 double WindowIdKill(char *winId) {
   return CrossProcess::WindowIdKill((WINDOWID)winId);
+}
+
+// get current working directory
+char *DirectoryGetCurrentWorking() {
+  return (char *)CrossProcess::DirectoryGetCurrentWorking();
+}
+
+// set current working directory based on a given dname
+double DirectorySetCurrentWorking(char *dname) {
+  return CrossProcess::DirectorySetCurrentWorking(dname);
+}
+
+// get the environment variable of the given name
+char *EnvironmentGetVariable(char *name) {
+  return (char *)CrossProcess::EnvironmentGetVariable(name);
+}
+
+// set the environment variable with the given name and value
+double EnvironmentSetVariable(char *name, char *value) {
+  return CrossProcess::EnvironmentSetVariable(name, value);
+}
+
+// unset the environment variable with the given name
+double EnvironmentUnsetVariable(char *name) {
+  return CrossProcess::EnvironmentUnsetVariable(name);
 }
 #endif

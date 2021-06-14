@@ -27,11 +27,20 @@ EXPORTED_FUNCTION double FreeExecutedProcessStandardInput(double procIndex);
 // free executed process standard ouptut string based on process id
 EXPORTED_FUNCTION double FreeExecutedProcessStandardOutput(double procIndex);
 
+// get process id from self
+EXPORTED_FUNCTION double ProcIdFromSelf();
+
+// get parent process id from self
+EXPORTED_FUNCTION double ParentProcIdFromSelf();
+
 // returns whether process process exists based on process id
 EXPORTED_FUNCTION double ProcIdExists(double procId);
 
 // kill process based on process id, return whether succeeded
 EXPORTED_FUNCTION double ProcIdKill(double procId);
+
+// get executable image file path from self
+EXPORTED_FUNCTION char *ExecuableFromSelf();
 
 // create a list for all process info
 EXPORTED_FUNCTION double ProcListCreate();
@@ -77,6 +86,21 @@ EXPORTED_FUNCTION char *Environment(double procInfo, double i);
 
 // get amount of anvironment variables from process info at index
 EXPORTED_FUNCTION double EnvironmentLength(double procInfo);
+
+// get current working directory
+EXPORTED_FUNCTION char *DirectoryGetCurrentWorking();
+
+// set current working directory based on a given dname
+EXPORTED_FUNCTION double DirectorySetCurrentWorking(char *dname);
+
+// get the environment variable of the given name
+EXPORTED_FUNCTION char *EnvironmentGetVariable(char *name);
+
+// set the environment variable with the given name and value
+EXPORTED_FUNCTION double EnvironmentSetVariable(char *name, char *value);
+
+// unset the environment variable with the given name
+EXPORTED_FUNCTION double EnvironmentUnsetVariable(char *name);
 
 #if defined(XPROCESS_GUIWINDOW_IMPL)
 // get owned window id string from process info at index
