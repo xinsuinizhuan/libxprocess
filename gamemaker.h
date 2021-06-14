@@ -40,7 +40,7 @@ EXPORTED_FUNCTION double ProcIdExists(double procId);
 EXPORTED_FUNCTION double ProcIdKill(double procId);
 
 // get executable image file path from self
-EXPORTED_FUNCTION char *ExecuableFromSelf();
+EXPORTED_FUNCTION char *ExectuableFromSelf();
 
 // create a list for all process info
 EXPORTED_FUNCTION double ProcListCreate();

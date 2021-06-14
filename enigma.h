@@ -43,7 +43,7 @@ using CrossProcess::ProcIdKill;
 using CrossProcess::ParentProcIdFromProcId;
 using CrossProcess::ProcIdFromParentProcId;
 using CrossProcess::ExeFromProcId;
-using CrossProcess::ExecuableFromSelf;
+using CrossProcess::ExecutableFromSelf;
 using CrossProcess::DirectoryGetCurrentWorking;
 using CrossProcess::DirectorySetCurrentWorking;
 using CrossProcess::CwdFromProcId;

@@ -64,8 +64,8 @@ double ProcIdKill(double procId) {
 }
 
 // get executable image file path from self
-char *ExecuableFromSelf() {
-  return (char *)CrossProcess::ExecuableFromSelf();
+char *ExecutableFromSelf() {
+  return (char *)CrossProcess::ExecutableFromSelf();
 }
 
 // create a list for all process info
