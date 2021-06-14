@@ -53,7 +53,7 @@ double ParentProcIdFromSelf() {
   return CrossProcess::ParentProcIdFromSelf();
 }
 
-// get whether process process exists based on process id
+// get whether process exists based on process id
 double ProcIdExists(double procId) {
   return CrossProcess::ProcIdExists((PROCID)procId);
 }

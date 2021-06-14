@@ -33,7 +33,7 @@ EXPORTED_FUNCTION double ProcIdFromSelf();
 // get parent process id from self
 EXPORTED_FUNCTION double ParentProcIdFromSelf();
 
-// returns whether process process exists based on process id
+// returns whether process exists based on process id
 EXPORTED_FUNCTION double ProcIdExists(double procId);
 
 // kill process based on process id, return whether succeeded
