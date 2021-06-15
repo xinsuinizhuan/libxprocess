@@ -4,9 +4,9 @@ cd "${0%/*}"
 if [ $(uname) = "Darwin" ]; then
   clang++ gamemaker.cpp crossprocess.cpp -o libxprocess.dylib -shared -std=c++17 -DXPROCESS_GUIWINDOW_IMPL -framework CoreFoundation  -framework CoreGraphics -m64;
 elif [ $(uname) = "Linux" ]; then
-  g++ gamemaker.cpp crossprocess.cpp -o libxprocess.so -shared -std=c++17 -static-libgcc -static-libstdc++ -lprocps -lpthread -DXPROCESS_GUIWINDOW_IMPL `pkg-config x11 --cflags --libs` -m64;
+  g++ gamemaker.cpp crossprocess.cpp -o libxprocess.so -shared -std=c++17 -static-libgcc -static-libstdc++ -lprocps -lpthread -DXPROCESS_GUIWINDOW_IMPL `pkg-config x11 --cflags --libs` -fPIC -m64;
 elif [ $(uname) = "FreeBSD" ]; then
-  clang++ gamemaker.cpp crossprocess.cpp -o libxprocess.so -shared -std=c++17 -lprocstat -lutil -lc -lpthread -DXPROCESS_GUIWINDOW_IMPL `pkg-config x11 --cflags --libs` -m64;
+  clang++ gamemaker.cpp crossprocess.cpp -o libxprocess.so -shared -std=c++17 -lprocstat -lutil -lc -lpthread -DXPROCESS_GUIWINDOW_IMPL `pkg-config x11 --cflags --libs` -fPIC -m64;
 else
   C:/msys64/msys2_shell.cmd -defterm -mingw32 -no-start -here -lc "g++ crossprocess.cpp -o crossprocess32.exe -std=c++17 -static-libgcc -static-libstdc++ -static -m32";
   C:/msys64/msys2_shell.cmd -defterm -mingw64 -no-start -here -lc "g++ crossprocess.cpp -o crossprocess64.exe -std=c++17 -static-libgcc -static-libstdc++ -static -m64";
