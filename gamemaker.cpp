@@ -105,7 +105,7 @@ char *ExecutableImageFilePath(double procInfo) {
 
 // get current working directory ffrom process info iteration
 char *CurrentWorkingDirectory(double procInfo) {
-  return CrossProcess::ExecutableImageFilePath((PROCINFO)procInfo);
+  return CrossProcess::CurrentWorkingDirectory((PROCINFO)procInfo);
 }
 
 // get parent processs id from process info iteration
