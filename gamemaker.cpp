@@ -1,3 +1,30 @@
+/*
+
+ MIT License
+ 
+ Copyright © 2021 Samuel Venable
+ Copyright © 2021 Lars Nilsson
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+ 
+*/
+
 #include "gamemaker.h"
 
 using CrossProcess::PROCID;
@@ -143,27 +170,6 @@ double EnvironmentLength(double procInfo) {
   return CrossProcess::EnvironmentLength((PROCINFO)procInfo);
 }
 
-#if defined(XPROCESS_GUIWINDOW_IMPL)
-// get owned window id string from process info at index
-char *OwnedWindowId(double procInfo, double i) {
-  return CrossProcess::OwnedWindowId((PROCINFO)procInfo, (int)i);
-}
-
-// get amount of owned window id's from process info at index
-double OwnedWindowIdLength(double procInfo) {
-  return CrossProcess::OwnedWindowIdLength((PROCINFO)procInfo);
-}
-
-// get whether a process exists based on one of its window id's
-double WindowIdExists(char *winId) {
-  return CrossProcess::WindowIdExists((WINDOWID)winId);
-}
-
-// kill a process based on one of its window id's, return whether succeeded
-double WindowIdKill(char *winId) {
-  return CrossProcess::WindowIdKill((WINDOWID)winId);
-}
-
 // get current working directory
 char *DirectoryGetCurrentWorking() {
   return (char *)CrossProcess::DirectoryGetCurrentWorking();
@@ -187,5 +193,26 @@ double EnvironmentSetVariable(char *name, char *value) {
 // unset the environment variable with the given name
 double EnvironmentUnsetVariable(char *name) {
   return CrossProcess::EnvironmentUnsetVariable(name);
+}
+
+#if defined(XPROCESS_GUIWINDOW_IMPL)
+// get owned window id string from process info at index
+char *OwnedWindowId(double procInfo, double i) {
+  return CrossProcess::OwnedWindowId((PROCINFO)procInfo, (int)i);
+}
+
+// get amount of owned window id's from process info at index
+double OwnedWindowIdLength(double procInfo) {
+  return CrossProcess::OwnedWindowIdLength((PROCINFO)procInfo);
+}
+
+// get whether a process exists based on one of its window id's
+double WindowIdExists(char *winId) {
+  return CrossProcess::WindowIdExists((WINDOWID)winId);
+}
+
+// kill a process based on one of its window id's, return whether succeeded
+double WindowIdKill(char *winId) {
+  return CrossProcess::WindowIdKill((WINDOWID)winId);
 }
 #endif
