@@ -95,72 +95,77 @@ char *ExecutableFromSelf() {
   return (char *)CrossProcess::ExecutableFromSelf();
 }
 
+// get executable image file path from process id
+char *ExeFromProcId(double procId) {
+  return (char *)CrossProcess::ExeFromProcId((PROCID)procId);
+}
+
+// get current working directory from process id
+char *CwdFromProcId(double procId) {
+  return (char *)CrossProcess::CwdFromProcId((PROCID)procId);
+}
+
 // get process info from process id
 double ProcInfoFromProcId(double procId) {
   return CrossProcess::ProcInfoFromProcId((PROCID)procId);
 }
 
-// create a list for all process info
-double ProcListCreate() {
-  return CrossProcess::ProcListCreate();
-}
-
-// get process info based on process list at index
-double ProcessInfo(double procList, double i) {
-  return CrossProcess::ProcessInfo((PROCLIST)procList, (int)i);
-}
-
-// get the amount of process info available for iteration
-double ProcessInfoLength(double procList) {
-  return CrossProcess::ProcessInfoLength((PROCLIST)procList);
-}
-
-// free iterations of process info list
+// free process info data from memory
 double FreeProcInfo(double procInfo) {
   CrossProcess::FreeProcInfo((PROCINFO)procInfo); return 0;
 }
 
-// free list of process info, (free the iterations separately)
+// create a list of all process id's
+double ProcListCreate() {
+  return CrossProcess::ProcListCreate();
+}
+
+// get process id from process list at index
+double ProcessId(double procList, double i) {
+  return CrossProcess::ProcessId((PROCLIST)procList, (int)i);
+}
+
+// get amount of process id's in process list
+double ProcessIdLength(double procList) {
+  return CrossProcess::ProcessIdLength((PROCLIST)procList);
+}
+
+// free list of process id's from memory
 double FreeProcList(double procList) {
   CrossProcess::FreeProcList((PROCLIST)procList); return 0;
 }
 
-// get process id from process info iteration
-double ProcessId(double procInfo) {
-  return CrossProcess::ProcessId((PROCINFO)procInfo);
-}
-
-// get executable image file path from process info iteration
+// get executable image file path from process info data
 char *ExecutableImageFilePath(double procInfo) {
   return CrossProcess::ExecutableImageFilePath((PROCINFO)procInfo);
 }
 
-// get current working directory ffrom process info iteration
+// get current working directory ffrom process info data
 char *CurrentWorkingDirectory(double procInfo) {
   return CrossProcess::CurrentWorkingDirectory((PROCINFO)procInfo);
 }
 
-// get parent processs id from process info iteration
+// get parent processs id from process info data
 double ParentProcessId(double procInfo) {
   return CrossProcess::ParentProcessId((PROCINFO)procInfo);
 }
 
-// get child process id from process info iteration at index
+// get child process id from process info data at index
 double ChildProcessId(double procInfo, double i) {
   return CrossProcess::ChildProcessId((PROCINFO)procInfo, (int)i);
 }
 
-// get amount of child processes from process info iteration
+// get amount of child processes from process info data
 double ChildProcessIdLength(double procInfo) {
   return CrossProcess::ChildProcessIdLength((PROCINFO)procInfo);
 }
 
-// get command line argument from process info iteration at index
+// get command line argument from process info data at index
 char *CommandLine(double procInfo, double i) {
   return CrossProcess::CommandLine((PROCINFO)procInfo, (int)i);
 }
 
-// get amount of command line arguments from process info iteration
+// get amount of command line arguments from process info data
 double CommandLineLength(double procInfo) {
   return CrossProcess::CommandLineLength((PROCINFO)procInfo);
 }

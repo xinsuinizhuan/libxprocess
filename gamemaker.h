@@ -60,7 +60,7 @@ EXPORTED_FUNCTION double ProcIdFromSelf();
 // get parent process id from self
 EXPORTED_FUNCTION double ParentProcIdFromSelf();
 
-// returns whether process exists based on process id
+// get whether process exists based on process id
 EXPORTED_FUNCTION double ProcIdExists(double procId);
 
 // kill process based on process id, return whether succeeded
@@ -69,46 +69,49 @@ EXPORTED_FUNCTION double ProcIdKill(double procId);
 // get executable image file path from self
 EXPORTED_FUNCTION char *ExecutableFromSelf();
 
+// get executable image file path from process id
+EXPORTED_FUNCTION char *ExeFromProcId(double procId);
+
+// get current working directory from process id
+EXPORTED_FUNCTION char *CwdFromProcId(double procId);
+
 // get process info from process id
 EXPORTED_FUNCTION double ProcInfoFromProcId(double procId);
 
-// create a list for all process info
-EXPORTED_FUNCTION double ProcListCreate();
-
-// get process info based on process list at index
-EXPORTED_FUNCTION double ProcessInfo(double procList, double i);
-
-// get the amount of process info available for iteration
-EXPORTED_FUNCTION double ProcessInfoLength(double procList);
-
-// free iterations of process info list
+// free process info data from memory
 EXPORTED_FUNCTION double FreeProcInfo(double procInfo);
 
-// free list of process info, (free the iterations separately)
+// create a list of all process id's
+EXPORTED_FUNCTION double ProcListCreate();
+
+// get process id from process list at index
+EXPORTED_FUNCTION double ProcessId(double procList, double i);
+
+// get amount of process id's in process list
+EXPORTED_FUNCTION double ProcessIdLength(double procList);
+
+// free list of process id's from memory
 EXPORTED_FUNCTION double FreeProcList(double procList);
 
-// get process id from process info iteration
-EXPORTED_FUNCTION double ProcessId(double procInfo);
-
-// get executable image file path from process info iteration
+// get executable image file path from process info data
 EXPORTED_FUNCTION char *ExecutableImageFilePath(double procInfo);
 
-// get current working directory ffrom process info iteration
+// get current working directory ffrom process info data
 EXPORTED_FUNCTION char *CurrentWorkingDirectory(double procInfo);
 
-// get parent processs id from process info iteration
+// get parent processs id from process info data
 EXPORTED_FUNCTION double ParentProcessId(double procInfo);
 
-// get child process id from process info iteration at index
+// get child process id from process info data at index
 EXPORTED_FUNCTION double ChildProcessId(double procInfo, double i);
 
-// get amount of child processes from process info iteration
+// get amount of child processes from process info data
 EXPORTED_FUNCTION double ChildProcessIdLength(double procInfo);
 
-// get command line argument from process info iteration at index
+// get command line argument from process info data at index
 EXPORTED_FUNCTION char *CommandLine(double procInfo, double i);
 
-// get amount of command line arguments from process info iteration
+// get amount of command line arguments from process info data
 EXPORTED_FUNCTION double CommandLineLength(double procInfo);
 
 // get environment variable (NAME=VALUE) from process info at index
