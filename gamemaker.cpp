@@ -95,12 +95,17 @@ char *ExecutableFromSelf() {
   return (char *)CrossProcess::ExecutableFromSelf();
 }
 
+// get process info from process id
+double ProcInfoFromProcId(double procId) {
+  return CrossProcess::ProcInfoFromProcId((PROCID)procId);
+}
+
 // create a list for all process info
 double ProcListCreate() {
   return CrossProcess::ProcListCreate();
 }
 
-// get process info pointer based on process list at index
+// get process info based on process list at index
 double ProcessInfo(double procList, double i) {
   return CrossProcess::ProcessInfo((PROCLIST)procList, (int)i);
 }

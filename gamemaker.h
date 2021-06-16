@@ -69,10 +69,13 @@ EXPORTED_FUNCTION double ProcIdKill(double procId);
 // get executable image file path from self
 EXPORTED_FUNCTION char *ExecutableFromSelf();
 
+// get process info from process id
+EXPORTED_FUNCTION double ProcInfoFromProcId(double procId);
+
 // create a list for all process info
 EXPORTED_FUNCTION double ProcListCreate();
 
-// get process info pointer based on process list at index
+// get process info based on process list at index
 EXPORTED_FUNCTION double ProcessInfo(double procList, double i);
 
 // get the amount of process info available for iteration
