@@ -49,8 +49,6 @@ using CrossProcess::DirectorySetCurrentWorking;
 using CrossProcess::CwdFromProcId;
 using CrossProcess::FreeCmdline;
 using CrossProcess::CmdlineFromProcId;
-using CrossProcess::ParentProcIdFromProcIdSkipSh;
-using CrossProcess::ProcIdFromParentProcIdSkipSh;
 using CrossProcess::EnvironmentGetVariable;
 using CrossProcess::EnvironmentSetVariable;
 using CrossProcess::EnvironmentUnsetVariable;
