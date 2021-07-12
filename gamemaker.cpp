@@ -25,6 +25,8 @@
  
 */
 
+#include <string>
+
 #include "gamemaker.h"
 
 using CrossProcess::PROCID;
