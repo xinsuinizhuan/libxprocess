@@ -7,7 +7,7 @@ ifeq ($(UNIX_BASED), true)
 		override LDLIBS += -lprocps
 	else ifeq ($(OS), FreeBSD)
 		override LDLIBS += -lprocstat -lutil -lc
-	else ifeq ($(OS), FreeBSD)
+	else ifeq ($(OS), DragonFly)
 		override LDLIBS += -lkvm -lutil -lc
 	endif
 else

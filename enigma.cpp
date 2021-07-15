@@ -227,6 +227,15 @@ double WindowIdExists(std::string winId) {
 double WindowIdKill(std::string winId) {
   return CrossProcess::WindowIdKill((WINDOWID)winId.c_str());
 }
+
+// return a window id from native window handle
+std::string WindowIdFromNativeWindow(void *window) {
+  #if (defined(__APPLE__) && defined(__MACH__))
+  return CrossProcess::WindowIdFromNextStepWindow(window);
+  #else
+  return CrossProcess::WindowIdFromNativeWindow((void *)(std::uintpr_t)(CrossProcess::WINDOW)window);
+  #endif
+} 
 #endif
 
 } // namespace enigma_user

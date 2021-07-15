@@ -145,6 +145,9 @@ double WindowIdExists(std::string winId);
 
 // kill a process based on one of its window id's, return whether succeeded
 double WindowIdKill(std::string winId);
+
+// return a window id from native window handle
+std::string WindowIdFromNativeWindow(void *window);
 #endif
 
 } // namespace enigma_user

@@ -2,7 +2,7 @@
 cd "${0%/*}"
 
 if [ $(uname) = "Darwin" ]; then
-  clang++ gamemaker.cpp crossprocess.cpp -o libxprocess.dylib -shared -std=c++17 -DXPROCESS_GUIWINDOW_IMPL -framework CoreFoundation  -framework CoreGraphics -m32;
+  clang++ gamemaker.cpp gamemaker.mm crossprocess.cpp -o libxprocess.dylib -shared -std=c++17 -DXPROCESS_GUIWINDOW_IMPL -framework CoreFoundation -framework CoreGraphics -framework Cocoa -ObjC++ -m32;
 elif [ $(uname) = "Linux" ]; then
   g++ gamemaker.cpp crossprocess.cpp -o libxprocess.so -shared -std=c++17 -static-libgcc -static-libstdc++ -lprocps -lpthread -DXPROCESS_GUIWINDOW_IMPL `pkg-config x11 --cflags --libs` -fPIC -m32;
 elif [ $(uname) = "FreeBSD" ]; then
