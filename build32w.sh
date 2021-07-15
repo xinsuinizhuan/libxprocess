@@ -2,11 +2,13 @@
 cd "${0%/*}"
 
 if [ $(uname) = "Darwin" ]; then
-  clang++ gamemaker.cpp gamemaker.mm crossprocess.cpp -o libxprocess.dylib -shared -std=c++17 -DXPROCESS_GUIWINDOW_IMPL -framework CoreFoundation -framework CoreGraphics -framework Cocoa -ObjC++ -m32;
+  clang++ gamemaker.cpp crossprocess.cpp -o libxprocess.dylib -shared -std=c++17 -DXPROCESS_GUIWINDOW_IMPL -framework CoreFoundation  -framework CoreGraphics -m32;
 elif [ $(uname) = "Linux" ]; then
   g++ gamemaker.cpp crossprocess.cpp -o libxprocess.so -shared -std=c++17 -static-libgcc -static-libstdc++ -lprocps -lpthread -DXPROCESS_GUIWINDOW_IMPL `pkg-config x11 --cflags --libs` -fPIC -m32;
 elif [ $(uname) = "FreeBSD" ]; then
   clang++ gamemaker.cpp crossprocess.cpp -o libxprocess.so -shared -std=c++17 -I/usr/local/include -L/usr/local/lib -lprocstat -lutil -lc -lpthread -DXPROCESS_GUIWINDOW_IMPL `pkg-config x11 --cflags --libs` -fPIC -m32;
+elif [ $(uname) = "DragonFly" ]; then
+  g++ gamemaker.cpp crossprocess.cpp -o libxprocess.so -shared -std=c++17 -I/usr/local/include -L/usr/local/lib -lkvm -lutil -lc -lpthread -DXPROCESS_GUIWINDOW_IMPL `pkg-config x11 --cflags --libs` -fPIC -m32;
 else
   C:/msys64/msys2_shell.cmd -defterm -mingw32 -no-start -here -lc "g++ crossprocess.cpp -o crossprocess32.exe -std=c++17 -static-libgcc -static-libstdc++ -static -m32";
   C:/msys64/msys2_shell.cmd -defterm -mingw64 -no-start -here -lc "g++ crossprocess.cpp -o crossprocess64.exe -std=c++17 -static-libgcc -static-libstdc++ -static -m64";

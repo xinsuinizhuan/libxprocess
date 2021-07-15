@@ -25,8 +25,6 @@
  
 */
 
-#include <cstddef>
-
 #include "gamemaker.h"
 
 using CrossProcess::PROCID;
@@ -227,13 +225,4 @@ double WindowIdExists(char *winId) {
 double WindowIdKill(char *winId) {
   return CrossProcess::WindowIdKill((WINDOWID)winId);
 }
-
-// return a window id from native window handle
-char *WindowIdFromNativeWindow(void *window) {
-  #if (defined(__APPLE__) && defined(__MACH__))
-  return CrossProcess::WindowIdFromNextStepWindow(window);
-  #else
-  return CrossProcess::WindowIdFromNativeWindow((void *)(std::uintpr_t)(CrossProcess::WINDOW)window);
-  #endif
-} 
 #endif
