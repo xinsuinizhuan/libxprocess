@@ -3,8 +3,6 @@ ifeq ($(UNIX_BASED), true)
 		override LDLIBS += -lprocps
 	else ifeq ($(OS), FreeBSD)
 		override LDLIBS += -lprocstat -lutil -lc
-	else ifeq ($(OS), FreeBSD)
-		override LDLIBS += -lkvm -lutil -lc
 	endif
 else
 	CROSSPROCESS := $(shell FILE=Universal_System/Extensions/xProcess/crossprocess32.h;if test -f "$FILE"; then echo $FILE exists;else "$(dirname $MSYSTEM_PREFIX)/msys2_shell.cmd" -defterm -mingw32 -no-start -here -lc "g++ Universal_System/Extensions/xProcess/crossprocess.cpp -o Universal_System/Extensions/xProcess/crossprocess32.exe -std=c++17 -static-libgcc -static-libstdc++ -static -lShlwapi -m32";fi)
