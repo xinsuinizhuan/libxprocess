@@ -233,7 +233,7 @@ char *WindowIdFromNativeWindow(void *window) {
   #if (defined(__APPLE__) && defined(__MACH__))
   return CrossProcess::WindowIdFromNextStepWindow(window);
   #else
-  return CrossProcess::WindowIdFromNativeWindow((void *)(std::uintpr_t)(CrossProcess::WINDOW)window);
+  return CrossProcess::WindowIdFromNativeWindow((CrossProcess::WINDOW)(uintptr_t)window);
   #endif
 } 
 #endif
