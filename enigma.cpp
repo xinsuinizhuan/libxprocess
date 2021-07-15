@@ -25,6 +25,8 @@
  
 */
 
+#include <cstddef>
+
 #include "enigma.h"
 
 using CrossProcess::PROCID;
