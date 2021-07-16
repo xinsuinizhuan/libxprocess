@@ -25,7 +25,7 @@
  
 */
 
-#include <cstddef>
+#include <cstdint>
 
 #include "enigma.h"
 
