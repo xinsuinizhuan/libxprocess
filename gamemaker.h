@@ -25,7 +25,7 @@
  
 */
 
-#include "crossprocess.h"
+#include "apiprocess/process.h"
 
 #ifdef _WIN32
 #define EXPORTED_FUNCTION extern "C" __declspec(dllexport)
@@ -34,9 +34,9 @@
 #endif
 
 #if (defined(__APPLE__) && defined(__MACH__))
-namespace CrossProcess {
-char *WindowIdFromNextStepWindow(void *window);
-} // namespace CrossProcess
+namespace ngs::proc {
+char *window_id_from_next_step_window(void *window);
+} // namespace ngs::proc
 #endif
 
 // execute process from the shell, return process id
@@ -140,6 +140,9 @@ EXPORTED_FUNCTION double EnvironmentSetVariable(char *name, char *value);
 
 // unset the environment variable with the given name
 EXPORTED_FUNCTION double EnvironmentUnsetVariable(char *name);
+
+// get temporary directory path
+EXPORTED_FUNCTION char *DirectoryGetTemporaryPath();
 
 #if defined(XPROCESS_GUIWINDOW_IMPL)
 // get owned window id string from process info at index

@@ -29,211 +29,217 @@
 
 #include "gamemaker.h"
 
-using CrossProcess::PROCID;
-using CrossProcess::PROCESS;
-using CrossProcess::PROCINFO;
-using CrossProcess::PROCLIST;
+using ngs::proc::PROCID;
+using ngs::proc::LOCALPROCID;
+using ngs::proc::PROCINFO;
+using ngs::proc::PROCINFO_SPECIFIC;
+using ngs::proc::PROCLIST;
 #if defined(XPROCESS_GUIWINDOW_IMPL)
-using CrossProcess::WINDOWID;
+using ngs::proc::WINDOWID;
 #endif
 
 // execute process from the shell, return process id
 double ProcessExecute(char *command) {
-  return CrossProcess::ProcessExecute(command);
+  return ngs::proc::process_execute(command);
 }
 
 // execute process from the shell async, return process id
 double ProcessExecuteAsync(char *command) {
-  return CrossProcess::ProcessExecuteAsync(command);
+  return ngs::proc::process_execute_async(command);
 }
 
 //  get whether executed process has quit based on process id
 double CompletionStatusFromExecutedProcess(double procIndex) {
-  return CrossProcess::CompletionStatusFromExecutedProcess((PROCESS)procIndex);
+  return ngs::proc::completion_status_from_executed_process((LOCALPROCID)procIndex);
 }
 
 // write to executed process standard input file descriptor based on process id
 double ExecutedProcessWriteToStandardInput(double procIndex, char *input) {
-  CrossProcess::ExecutedProcessWriteToStandardInput((PROCESS)procIndex, input); return 0;
+  ngs::proc::executed_process_write_to_standard_input((LOCALPROCID)procIndex, input); return 0;
 }
 
 // read from executed process standard output file descriptor based on process id
 char *ExecutedProcessReadFromStandardOutput(double procIndex) {
-  return (char *)CrossProcess::ExecutedProcessReadFromStandardOutput((PROCESS)procIndex);
+  return (char *)ngs::proc::executed_process_read_from_standard_output((LOCALPROCID)procIndex);
 }
 
 // free executed process standard input string based on process id
 double FreeExecutedProcessStandardInput(double procIndex) {
-  CrossProcess::FreeExecutedProcessStandardInput((PROCESS)procIndex); return 0;
+  ngs::proc::free_executed_process_standard_input((LOCALPROCID)procIndex); return 0;
 }
 
 // free executed process standard ouptut string based on process id
 double FreeExecutedProcessStandardOutput(double procIndex) {
-  CrossProcess::FreeExecutedProcessStandardOutput((PROCESS)procIndex); return 0;
+  ngs::proc::free_executed_process_standard_output((LOCALPROCID)procIndex); return 0;
 }
 
 // get process id from self
 double ProcIdFromSelf() {
-  return CrossProcess::ProcIdFromSelf();
+  return ngs::proc::proc_id_from_self();
 }
 
 // get parent process id from self
 double ParentProcIdFromSelf() {
-  return CrossProcess::ParentProcIdFromSelf();
+  return ngs::proc::parent_proc_id_from_self();
 }
 
 // get whether process exists based on process id
 double ProcIdExists(double procId) {
-  return CrossProcess::ProcIdExists((PROCID)procId);
+  return ngs::proc::proc_id_exists((PROCID)procId);
 }
 
 // kill process based on process id, return whether succeeded
 double ProcIdKill(double procId) {
-  return CrossProcess::ProcIdKill((PROCID)procId);
+  return ngs::proc::proc_id_kill((PROCID)procId);
 }
 
 // get executable image file path from self
 char *ExecutableFromSelf() {
-  return (char *)CrossProcess::ExecutableFromSelf();
+  return (char *)ngs::proc::executable_from_self();
 }
 
 // get executable image file path from process id
 char *ExeFromProcId(double procId) {
-  return (char *)CrossProcess::ExeFromProcId((PROCID)procId);
+  return (char *)ngs::proc::exe_from_proc_id((PROCID)procId);
 }
 
 // get current working directory from process id
 char *CwdFromProcId(double procId) {
-  return (char *)CrossProcess::CwdFromProcId((PROCID)procId);
+  return (char *)ngs::proc::cwd_from_proc_id((PROCID)procId);
 }
 
 // get process info from process id
-double ProcInfoFromProcId(double procId) {
-  return CrossProcess::ProcInfoFromProcId((PROCID)procId);
+double ProcInfoFromProcId(double procId, double specifics) {
+  return ngs::proc::proc_info_from_proc_id((PROCID)procId, (PROCINFO_SPECIFIC)specifics);
 }
 
 // free process info data from memory
 double FreeProcInfo(double procInfo) {
-  CrossProcess::FreeProcInfo((PROCINFO)procInfo); return 0;
+  ngs::proc::free_proc_info((PROCINFO)procInfo); return 0;
 }
 
 // create a list of all process id's
 double ProcListCreate() {
-  return CrossProcess::ProcListCreate();
+  return ngs::proc::proc_list_create();
 }
 
 // get process id from process list at index
 double ProcessId(double procList, double i) {
-  return CrossProcess::ProcessId((PROCLIST)procList, (int)i);
+  return ngs::proc::process_id((PROCLIST)procList, (int)i);
 }
 
 // get amount of process id's in process list
 double ProcessIdLength(double procList) {
-  return CrossProcess::ProcessIdLength((PROCLIST)procList);
+  return ngs::proc::process_id_length((PROCLIST)procList);
 }
 
 // free list of process id's from memory
 double FreeProcList(double procList) {
-  CrossProcess::FreeProcList((PROCLIST)procList); return 0;
+  ngs::proc::free_proc_list((PROCLIST)procList); return 0;
 }
 
 // get executable image file path from process info data
 char *ExecutableImageFilePath(double procInfo) {
-  return CrossProcess::ExecutableImageFilePath((PROCINFO)procInfo);
+  return ngs::proc::executable_image_file_path((PROCINFO)procInfo);
 }
 
 // get current working directory ffrom process info data
 char *CurrentWorkingDirectory(double procInfo) {
-  return CrossProcess::CurrentWorkingDirectory((PROCINFO)procInfo);
+  return ngs::proc::current_working_directory((PROCINFO)procInfo);
 }
 
 // get parent processs id from process info data
 double ParentProcessId(double procInfo) {
-  return CrossProcess::ParentProcessId((PROCINFO)procInfo);
+  return ngs::proc::parent_process_id((PROCINFO)procInfo);
 }
 
 // get child process id from process info data at index
 double ChildProcessId(double procInfo, double i) {
-  return CrossProcess::ChildProcessId((PROCINFO)procInfo, (int)i);
+  return ngs::proc::child_process_id((PROCINFO)procInfo, (int)i);
 }
 
 // get amount of child processes from process info data
 double ChildProcessIdLength(double procInfo) {
-  return CrossProcess::ChildProcessIdLength((PROCINFO)procInfo);
+  return ngs::proc::child_process_id_length((PROCINFO)procInfo);
 }
 
 // get command line argument from process info data at index
 char *CommandLine(double procInfo, double i) {
-  return CrossProcess::CommandLine((PROCINFO)procInfo, (int)i);
+  return ngs::proc::commandline((PROCINFO)procInfo, (int)i);
 }
 
 // get amount of command line arguments from process info data
 double CommandLineLength(double procInfo) {
-  return CrossProcess::CommandLineLength((PROCINFO)procInfo);
+  return ngs::proc::commandline_length((PROCINFO)procInfo);
 }
 
 // get environment variable (NAME=VALUE) from process info at index
 char *Environment(double procInfo, double i) {
-  return CrossProcess::Environment((PROCINFO)procInfo, (int)i);
+  return ngs::proc::environment((PROCINFO)procInfo, (int)i);
 }
 
 // get amount of anvironment variables from process info at index
 double EnvironmentLength(double procInfo) {
-  return CrossProcess::EnvironmentLength((PROCINFO)procInfo);
+  return ngs::proc::environment_length((PROCINFO)procInfo);
 }
 
 // get current working directory
 char *DirectoryGetCurrentWorking() {
-  return (char *)CrossProcess::DirectoryGetCurrentWorking();
+  return (char *)ngs::proc::directory_get_current_working();
 }
 
 // set current working directory based on a given dname
 double DirectorySetCurrentWorking(char *dname) {
-  return CrossProcess::DirectorySetCurrentWorking(dname);
+  return ngs::proc::directory_set_current_working(dname);
 }
 
 // get the environment variable of the given name
 char *EnvironmentGetVariable(char *name) {
-  return (char *)CrossProcess::EnvironmentGetVariable(name);
+  return (char *)ngs::proc::environment_get_variable(name);
 }
 
 // set the environment variable with the given name and value
 double EnvironmentSetVariable(char *name, char *value) {
-  return CrossProcess::EnvironmentSetVariable(name, value);
+  return ngs::proc::environment_set_variable(name, value);
 }
 
 // unset the environment variable with the given name
 double EnvironmentUnsetVariable(char *name) {
-  return CrossProcess::EnvironmentUnsetVariable(name);
+  return ngs::proc::environment_unset_variable(name);
+}
+
+// get temporary directory path
+char *DirectoryGetTemporaryPath() {
+  return (char *)ngs::proc::directory_get_temporary_path();
 }
 
 #if defined(XPROCESS_GUIWINDOW_IMPL)
 // get owned window id string from process info at index
 char *OwnedWindowId(double procInfo, double i) {
-  return CrossProcess::OwnedWindowId((PROCINFO)procInfo, (int)i);
+  return ngs::proc::owned_window_id((PROCINFO)procInfo, (int)i);
 }
 
 // get amount of owned window id's from process info at index
 double OwnedWindowIdLength(double procInfo) {
-  return CrossProcess::OwnedWindowIdLength((PROCINFO)procInfo);
+  return ngs::proc::owned_window_id_length((PROCINFO)procInfo);
 }
 
 // get whether a process exists based on one of its window id's
 double WindowIdExists(char *winId) {
-  return CrossProcess::WindowIdExists((WINDOWID)winId);
+  return ngs::proc::window_id_exists((WINDOWID)winId);
 }
 
 // kill a process based on one of its window id's, return whether succeeded
 double WindowIdKill(char *winId) {
-  return CrossProcess::WindowIdKill((WINDOWID)winId);
+  return ngs::proc::window_id_kill((WINDOWID)winId);
 }
 
 // return a window id from native window handle
 char *WindowIdFromNativeWindow(void *window) {
   #if (defined(__APPLE__) && defined(__MACH__))
-  return CrossProcess::WindowIdFromNextStepWindow(window);
+  return ngs::proc::window_id_from_next_step_window(window);
   #else
-  return CrossProcess::WindowIdFromNativeWindow((CrossProcess::WINDOW)(uintptr_t)window);
+  return ngs::proc::window_id_from_native_window((ngs::proc::WINDOW)(uintptr_t)window);
   #endif
 } 
 #endif

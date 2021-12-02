@@ -31,12 +31,12 @@
 
 #include "gamemaker.h"
 
-namespace CrossProcess {
+namespace ngs::proc {
 
-char *WindowIdFromNextStepWindow(void *window) {
+char *window_id_from_next_step_window(void *window) {
   static std::string wid;
   wid = std::to_string([(NSWindow *)window windowNumber]);
   return (char *)wid.c_str();
 }
 
-} // namespace CrossProcess
+} // namespace ngs::proc
