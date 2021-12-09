@@ -32,7 +32,6 @@
 using ngs::proc::PROCID;
 using ngs::proc::LOCALPROCID;
 using ngs::proc::PROCINFO;
-using ngs::proc::PROCINFO_SPECIFIC;
 using ngs::proc::PROCLIST;
 #if defined(XPROCESS_GUIWINDOW_IMPL)
 using ngs::proc::WINDOWID;
@@ -109,8 +108,8 @@ char *CwdFromProcId(double procId) {
 }
 
 // get process info from process id
-double ProcInfoFromProcId(double procId, double specifics) {
-  return ngs::proc::proc_info_from_proc_id((PROCID)procId, (PROCINFO_SPECIFIC)specifics);
+double ProcInfoFromProcId(double procId) {
+  return ngs::proc::proc_info_from_proc_id((PROCID)procId);
 }
 
 // free process info data from memory
