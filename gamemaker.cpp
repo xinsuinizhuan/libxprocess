@@ -57,6 +57,11 @@ double ExecutedProcessWriteToStandardInput(double procIndex, char *input) {
   ngs::proc::executed_process_write_to_standard_input((LOCALPROCID)procIndex, input); return 0;
 }
 
+// read from current process standard input
+char *CurrentProcessReadFromStandardInput() {
+  return (char *)ngs::proc::current_process_read_from_standard_input();
+}
+
 // read from executed process standard output file descriptor based on process id
 char *ExecutedProcessReadFromStandardOutput(double procIndex) {
   return (char *)ngs::proc::executed_process_read_from_standard_output((LOCALPROCID)procIndex);
