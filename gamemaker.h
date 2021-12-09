@@ -51,6 +51,9 @@ EXPORTED_FUNCTION double CompletionStatusFromExecutedProcess(double procIndex);
 // write to executed process standard input file descriptor based on process id
 EXPORTED_FUNCTION double ExecutedProcessWriteToStandardInput(double procIndex, char *input);
 
+// read from current process standard input file descriptor
+EXPORTED_FUNCTION char *CurrentProcessReadFromStandardInput();
+
 // read from executed process standard output file descriptor based on process id
 EXPORTED_FUNCTION char *ExecutedProcessReadFromStandardOutput(double procIndex);
 
