@@ -35,7 +35,7 @@
 
 #if (defined(__APPLE__) && defined(__MACH__))
 namespace ngs::proc {
-char *window_id_from_next_step_window(void *window);
+  char *window_id_from_next_step_window(void *window);
 } // namespace ngs::proc
 #endif
 
