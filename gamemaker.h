@@ -33,12 +33,6 @@
 #define EXPORTED_FUNCTION extern "C" __attribute__((visibility("default")))
 #endif
 
-#if (defined(__APPLE__) && defined(__MACH__))
-namespace ngs::proc {
-  char *window_id_from_next_step_window(void *window);
-} // namespace ngs::proc
-#endif
-
 // execute process from the shell, return process id
 EXPORTED_FUNCTION double ProcessExecute(char *command);
 
@@ -159,7 +153,4 @@ EXPORTED_FUNCTION double WindowIdExists(char *winId);
 
 // kill a process based on one of its window id's, return whether succeeded
 EXPORTED_FUNCTION double WindowIdKill(char *winId);
-
-// return a window id from native window handle
-EXPORTED_FUNCTION char *WindowIdFromNativeWindow(void *window);
 #endif
