@@ -19,6 +19,6 @@ else
   xxd -i 'process32' | sed 's/\([0-9a-f]\)$/\0, 0x00/' > 'apiprocess/process32.h';
   xxd -i 'process64' | sed 's/\([0-9a-f]\)$/\0, 0x00/' > 'apiprocess/process64.h';
   rm -f "process32.exe" "process64.exe";
-  C:/msys64/msys2_shell.cmd -defterm -mingw32 -no-start -here -lc "g++ -c gamemaker.cpp apiprocess/process.cpp -shared -std=c++17 -static-libgcc -static-libstdc++ -static -DPROCESS_WIN32EXE_INCLUDES -DPROCESS_GUIWINDOW_IMPL && g++ gamemaker.o process.o -o  libxprocess.dll -shared -std=c++17 -static-libgcc -static-libstdc++ -static -DPROCESS_WIN32EXE_INCLUDES -DPROCESS_GUIWINDOW_IMPL";
+  g++ -c gamemaker.cpp apiprocess/process.cpp -shared -std=c++17 -static-libgcc -static-libstdc++ -static -DPROCESS_WIN32EXE_INCLUDES -DPROCESS_GUIWINDOW_IMPL && g++ gamemaker.o process.o -o  libxprocess.dll -shared -std=c++17 -static-libgcc -static-libstdc++ -static -DPROCESS_WIN32EXE_INCLUDES -DPROCESS_GUIWINDOW_IMPL;
   ar rc libxprocess.a gamemaker.o process.o && rm -f "apiprocess/process32.h" "apiprocess/process64.h" "gamemaker.o" "process.o";
 fi
