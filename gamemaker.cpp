@@ -236,5 +236,10 @@ double WindowIdExists(char *winId) {
 // kill a process based on one of its window id's, return whether succeeded
 double WindowIdKill(char *winId) {
   return ngs::proc::window_id_kill((WINDOWID)winId);
-} 
+}
+
+// return a window id from native window handle
+char *WindowIdFromNativeWindow(void *window) {
+  return ngs::proc::window_id_from_native_window((ngs::proc::WINDOW)(uintptr_t)window);
+}
 #endif
