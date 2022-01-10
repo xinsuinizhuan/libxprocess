@@ -33,7 +33,7 @@ using ngs::proc::PROCID;
 using ngs::proc::LOCALPROCID;
 using ngs::proc::PROCINFO;
 using ngs::proc::PROCLIST;
-#if defined(XPROCESS_GUIWINDOW_IMPL)
+#if defined(PROCESS_GUIWINDOW_IMPL)
 using ngs::proc::WINDOWID;
 #endif
 
@@ -217,7 +217,7 @@ char *DirectoryGetTemporaryPath() {
   return (char *)ngs::proc::directory_get_temporary_path();
 }
 
-#if defined(XPROCESS_GUIWINDOW_IMPL)
+#if defined(PROCESS_GUIWINDOW_IMPL)
 // get owned window id string from process info at index
 char *OwnedWindowId(double procInfo, double i) {
   return ngs::proc::owned_window_id((PROCINFO)procInfo, (int)i);
