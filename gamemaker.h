@@ -141,7 +141,7 @@ EXPORTED_FUNCTION double EnvironmentUnsetVariable(char *name);
 // get temporary directory path
 EXPORTED_FUNCTION char *DirectoryGetTemporaryPath();
 
-#if defined(XPROCESS_GUIWINDOW_IMPL)
+#if defined(PROCESS_GUIWINDOW_IMPL)
 // get owned window id string from process info at index
 EXPORTED_FUNCTION char *OwnedWindowId(double procInfo, double i);
 
